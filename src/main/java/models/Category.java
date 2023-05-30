@@ -1,4 +1,4 @@
-package com.example.demo;
+package models;
 
 public class Category {
     private Integer categoryNumber;

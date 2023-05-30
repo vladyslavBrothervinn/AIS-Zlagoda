@@ -6,7 +6,7 @@ public class DatabaseManager {
     Statement statement;
     private static DatabaseManager databaseManager;
     public static DatabaseManager getDatabaseManager() throws SQLException {
-        if(databaseManager==null) databaseManager = new DatabaseManager("jdbc:ucanaccess://src/main/resources/Zlagoda.accdb");
+        if(databaseManager==null) databaseManager = new DatabaseManager("jdbc:ucanaccess://src/main/resources/Zlagoda.accdb;COLUMNORDER=DISPLAY");
         return databaseManager;
     }
     public DatabaseManager(String sqlAddress) throws SQLException {
