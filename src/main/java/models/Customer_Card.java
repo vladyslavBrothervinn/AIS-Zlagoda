@@ -1,6 +1,6 @@
 package models;
 
-public class Customer_Card {
+public class Customer_Card extends Table{
     private String cardNumber;
     private String custSurname;
     private String custName;
@@ -94,5 +94,12 @@ public class Customer_Card {
 
     public void setPercent(Integer percent) {
         this.percent = percent;
+    }
+
+    @Override
+    public String[] getFieldsValuesAsStringArray() {
+        return new String[]{"'"+getCardNumber()+"'", "'"+getCustSurname()+"'",
+                "'"+getCustName()+"'", "'"+getCustPatronymic()+"'", "'"+getPhoneNumber()+"'",
+                "'"+getCity()+"'","'"+getStreet()+"'", "'"+getZipCode()+"'", getPercent().toString()};
     }
 }

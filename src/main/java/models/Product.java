@@ -1,6 +1,6 @@
 package models;
 
-public class Product {
+public class Product extends Table{
     private Integer idProduct;
     private Integer categoryNumber;
     private String productName;
@@ -42,5 +42,11 @@ public class Product {
 
     public void setCharacteristics(String characteristics) {
         this.characteristics = characteristics;
+    }
+
+    @Override
+    public String[] getFieldsValuesAsStringArray() {
+        return new String[]{getIdProduct().toString(), getCategoryNumber().toString(),
+                "'"+getProductName()+"'", "'"+getCharacteristics()+"'"};
     }
 }

@@ -2,7 +2,7 @@ package models;
 
 import java.sql.Date;
 
-public class Check {
+public class Check extends Table{
     private String checkNumber;
     private String idEmployee;
     private String cardNumber;
@@ -64,5 +64,11 @@ public class Check {
 
     public void setVat(Double vat) {
         this.vat = vat;
+    }
+
+    @Override
+    public String[] getFieldsValuesAsStringArray() {
+        return new String[]{"'"+getCheckNumber()+"'", "'"+getIdEmployee()+"'",
+                "'"+getCardNumber()+"'", getPrintDate().toString(), getSumTotal().toString(), getVat().toString()};
     }
 }

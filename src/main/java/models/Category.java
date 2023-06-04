@@ -1,6 +1,6 @@
 package models;
 
-public class Category {
+public class Category extends Table{
     private Integer categoryNumber;
     private String categoryName;
     public Category(int categoryNumber, String categoryName){
@@ -22,5 +22,10 @@ public class Category {
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+    }
+
+    @Override
+    public String[] getFieldsValuesAsStringArray(){
+        return new String[]{getCategoryNumber().toString(), "'"+getCategoryName()+"'"};
     }
 }

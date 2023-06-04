@@ -2,7 +2,7 @@ package models;
 
 import java.sql.Date;
 
-public class Employee {
+public class Employee extends Table{
     private String idEmployee;
     private String emplSurname;
     private String emplName;
@@ -127,5 +127,13 @@ public class Employee {
 
     public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
+    }
+
+    @Override
+    public String[] getFieldsValuesAsStringArray() {
+        return new String[]{"'"+getIdEmployee()+"'", "'"+getEmplSurname()+"'", "'"+getEmplName()+"'",
+                "'"+getEmplPatron()+"'", "'"+getEmplRole()+"'",
+                getSalary().toString(), "'"+getDateOfBirth()+"'", "'"+getDateOfStart()+"'",
+                "'"+getCity()+"'", "'"+getStreet()+"'", "'"+getZipCode()+"'"};
     }
 }

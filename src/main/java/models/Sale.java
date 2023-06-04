@@ -1,6 +1,6 @@
 package models;
 
-public class Sale {
+public class Sale extends Table{
     private String upc;
     private String checkNumber;
     private Integer productNumber;
@@ -44,5 +44,11 @@ public class Sale {
 
     public void setSellingPrice(Double sellingPrice) {
         this.sellingPrice = sellingPrice;
+    }
+
+    @Override
+    public String[] getFieldsValuesAsStringArray() {
+        return new String[]{"'" + getUpc() + "'", "'" + getCheckNumber() + "'",
+                getProductNumber().toString(), getSellingPrice().toString()};
     }
 }

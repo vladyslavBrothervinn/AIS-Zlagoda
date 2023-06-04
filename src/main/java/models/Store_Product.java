@@ -1,6 +1,6 @@
 package models;
 
-public class Store_Product {
+public class Store_Product extends Table{
     private String upc;
     private String upcProm;
     private Integer idProduct;
@@ -63,5 +63,12 @@ public class Store_Product {
 
     public void setPromotionalProduct(Boolean promotionalProduct) {
         this.promotionalProduct = promotionalProduct;
+    }
+
+    @Override
+    public String[] getFieldsValuesAsStringArray() {
+        return new String[]{"'"+getUpc()+"'", "'"+getUpcProm()+"'",
+                getIdProduct().toString(), getSellingPrice().toString(),
+                getProductsNumber().toString(), getPromotionalProduct().toString()};
     }
 }
