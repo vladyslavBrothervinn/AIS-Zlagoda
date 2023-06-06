@@ -26,7 +26,6 @@ public class DatabaseManager {
             sqlQuery.append(values[i]).append(values.length == i + 1 ? ")" : ", ");
         }
         statement.executeUpdate(sqlQuery.toString());
-        //System.out.println(sqlQuery);
     }
 
     /** Inserts one record into table, but data is specified only for chosen columns (can be used, for example, when you have autoincrement key)
@@ -46,7 +45,6 @@ public class DatabaseManager {
             sqlQuery.append(values[i]).append(values.length == i + 1 ? ")" : ", ");
         }
         statement.executeUpdate(sqlQuery.toString());
-        //System.out.println(sqlQuery);
     }
 
     /** Updates records specified by keys
@@ -69,9 +67,6 @@ public class DatabaseManager {
             sqlQuery.append(" ").append(keyColumnsNames[i]).append(" = ").append(keyValues[i]).append(keyColumnsNames.length == i + 1 ? "" : " AND");
         }
         statement.executeUpdate(sqlQuery.toString());
-        //System.out.println(sqlQuery);
-        //DatabaseMetaData meta = conn.getMetaData();
-        //getPrimaryKeys()
     }
 
     /** Deletes records specified by keys
@@ -87,7 +82,6 @@ public class DatabaseManager {
             sqlQuery.append(" ").append(keyColumnsNames[i]).append(" = ").append(keyValues[i]).append(keyColumnsNames.length == i + 1 ? "" : " AND");
         }
         statement.executeUpdate(sqlQuery.toString());
-        //System.out.println(sqlQuery);
     }
 
     /** Returns all data from table as ResultSet
@@ -121,7 +115,6 @@ public class DatabaseManager {
         for(int i = 0; i < keyColumnsNames.length; i++){
             sqlQuery.append(" ").append(keyColumnsNames[i]).append(" = ").append(keyValues[i]).append(keyColumnsNames.length == i + 1 ? "" : " AND");
         }
-        // System.out.println(sqlQuery);
         return statement.executeQuery(sqlQuery.toString());
     }
 }
