@@ -134,7 +134,8 @@ public class DatabaseManager {
                                             Date[] findWhereDateIsWithinCellValues,
                                             String[] columns) throws SQLException {
         StringBuilder sqlQuery = new StringBuilder("SELECT ");
-        if(columns.length==0) sqlQuery.append("*");
+        if(columns == null||columns.length==0) sqlQuery.append("*");
+        else
         for (int i = 0; i < columns.length; i++){
             sqlQuery.append(columns[i]).append(columns.length==i+1?"":", ");
         }

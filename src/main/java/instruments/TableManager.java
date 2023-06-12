@@ -9,8 +9,10 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import models.*;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedList;
 import java.util.Objects;
 
 public class TableManager<T extends Table> {
@@ -23,6 +25,9 @@ public class TableManager<T extends Table> {
     private ResultSet resultSet;
     private String[] keyColumnsNames;
     private String[] columnsNames;
+    private LinkedList<TableFilter> keyFilters;
+    private LinkedList<TableFilter> substringFilters;
+    private LinkedList<TableFilter> dateFilters;
 
     /** Table manager, connects data shown in tableView to database
      *
@@ -34,6 +39,9 @@ public class TableManager<T extends Table> {
      * @throws ClassNotFoundException
      */
     public TableManager(DatabaseManager databaseManager, TableView<T> tableView, String tableName) throws SQLException, ClassNotFoundException {
+        keyFilters = new LinkedList<>();
+        substringFilters = new LinkedList<>();
+        dateFilters = new LinkedList<>();
         this.tableView = tableView;
         if(databaseManager==null) this.databaseManager = DatabaseManager.getDatabaseManager();
         else this.databaseManager = databaseManager;
@@ -70,12 +78,37 @@ public class TableManager<T extends Table> {
 
     /**Gets all data from database again and renews data in tableView
      *
-     * @throws SQLException good luck with fixing :)
+     * @throws SQLException
      */
     public void renewTable() throws SQLException {
         int row = tableView.getSelectionModel().getSelectedIndex();
         data.clear();
+        if(keyFilters.isEmpty()&&substringFilters.isEmpty()&&dateFilters.isEmpty())
         resultSet = databaseManager.selectRecords(tableName);
+        else {
+            String[] keyFilterColumnNames = new String[keyFilters.size()];
+            String[] keyFilterValues = new String[keyFilters.size()];
+            String[] substringFilterColumnNames = new String[substringFilters.size()];
+            String[] substringFilterValues = new String[substringFilters.size()];
+            String[] dateFilterColumnNames = new String[dateFilters.size()];
+            Date[] dateFilterValues = new Date[dateFilters.size()*2];
+
+            for(int i = 0; i < keyFilters.size(); i++){
+                keyFilterColumnNames[i] = keyFilters.get(i).fieldName;
+                keyFilterValues[i] = keyFilters.get(i).fieldValues[0];
+            }
+            for (int i = 0; i < substringFilters.size(); i++){
+                substringFilterColumnNames[i] = substringFilters.get(i).fieldName;
+                substringFilterValues[i] = substringFilters.get(i).fieldValues[0];
+            }
+            for(int i = 0; i < dateFilters.size(); i++){
+                dateFilterColumnNames[i] = dateFilters.get(i).fieldName;
+                dateFilterValues[i*2] = Date.valueOf(dateFilters.get(i).fieldValues[0]);
+                dateFilterValues[i*2+1] = Date.valueOf(dateFilters.get(i).fieldValues[1]);
+            }
+            resultSet = databaseManager.selectSpecifiedRecords(tableName, keyFilterColumnNames, keyFilterValues, substringFilterColumnNames,
+                    substringFilterValues, dateFilterColumnNames, dateFilterValues, null);
+        }
         switch (tableName){
             case "Category":
                 while (resultSet.next()) data.add((T) new Category(resultSet.getInt(1), resultSet.getString(2)));
@@ -125,7 +158,7 @@ public class TableManager<T extends Table> {
      *
      * @param keyValues values of primary key(s)
      * @param newRowValue object which will be a new value of the row(make sure that primary keys are same as in updated row)
-     * @throws SQLException good luck with fixing :)
+     * @throws SQLException
      */
     public void updateRow(String[] keyValues, T newRowValue) throws SQLException {
         String[] columnsValues = newRowValue.getFieldsValuesAsStringArray();
@@ -136,7 +169,7 @@ public class TableManager<T extends Table> {
     /** Deletes one record
      *
      * @param keyValues values of primary key(s)
-     * @throws SQLException good luck with fixing :)
+     * @throws SQLException
      */
     public void deleteRow(String[] keyValues) throws SQLException {
         databaseManager.deleteRecords(tableName, keyColumnsNames, keyValues);
@@ -146,7 +179,7 @@ public class TableManager<T extends Table> {
     /** Inserts one record
      *
      * @param newRowValue object which will be a new value of the row
-     * @throws SQLException good luck with fixing :)
+     * @throws SQLException
      */
     public void insertRow(T newRowValue) throws SQLException {
         String[] columnValues = newRowValue.getFieldsValuesAsStringArray();
@@ -154,6 +187,53 @@ public class TableManager<T extends Table> {
         renewTable();
     }
 
+    /**
+     * Class which represents simple filter: key filter means that field can contain only this value,
+     *  substring filter means that the field must have this substring(only for String type)
+     *  date filter means that the field must be between two dates in array(only for dates)
+     */
+    public class TableFilter{
+        public String fieldName;
+        public String[] fieldValues;
+        public TableFilter(String fieldName, String[] fieldValues){
+            this.fieldName = fieldName;
+            this.fieldValues = fieldValues;
+        }
+    }
+    public void removeAllFilters() throws SQLException {
+        keyFilters.clear();
+        substringFilters.clear();
+        dateFilters.clear();
+        renewTable();
+    }
+    //If type is String or date, write in this way: 'someString'
+    public void addKeyFilter(String fieldName, String fieldValue) throws SQLException {
+        TableFilter tableFilter = new TableFilter(fieldName, new String[]{fieldValue});
+        if(!keyFilters.contains(tableFilter)) keyFilters.add(tableFilter);
+        renewTable();
+    }
+    public void addSubstringFilter(String fieldName, String substring) throws SQLException {
+        TableFilter tableFilter = new TableFilter(fieldName, new String[]{substring});
+        if(!substringFilters.contains(tableFilter)) substringFilters.add(tableFilter);
+        renewTable();
+    }
+    public void addDateFilter(String fieldName, String[] dates) throws SQLException {
+        TableFilter tableFilter = new TableFilter(fieldName, dates);
+        if(!dateFilters.contains(tableFilter)) dateFilters.add(tableFilter);
+        renewTable();
+    }
+    public void removeKeyFilter(TableFilter tableFilter) throws SQLException {
+        keyFilters.remove(tableFilter);
+        renewTable();
+    }
+    public void removeSubstringFilter(TableFilter tableFilter) throws SQLException {
+        substringFilters.remove(tableFilter);
+        renewTable();
+    }
+    public void removeDateFilter(TableFilter tableFilter) throws SQLException {
+        dateFilters.remove(tableFilter);
+        renewTable();
+    }
 /*
     private class AsyncRenew extends Thread{
         public void run(){
