@@ -28,4 +28,8 @@ public class Category extends Table{
     public String[] getFieldsValuesAsStringArray(){
         return new String[]{getCategoryNumber().toString(), "'"+getCategoryName()+"'"};
     }
+    @Override
+    public String[] getKeyValues(){
+        return new String[]{categoryNumber.toString()};
+    }
 }

@@ -71,4 +71,8 @@ public class Store_Product extends Table{
                 getIdProduct().toString(), getSellingPrice().toString(),
                 getProductsNumber().toString(), getPromotionalProduct().toString()};
     }
+    @Override
+    public String[] getKeyValues(){
+        return new String[]{upc};
+    }
 }

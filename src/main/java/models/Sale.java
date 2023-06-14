@@ -51,4 +51,8 @@ public class Sale extends Table{
         return new String[]{"'" + getUpc() + "'", "'" + getCheckNumber() + "'",
                 getProductNumber().toString(), getSellingPrice().toString()};
     }
+    @Override
+    public String[] getKeyValues(){
+        return new String[]{upc, checkNumber};
+    }
 }

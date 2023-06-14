@@ -71,4 +71,8 @@ public class Check extends Table{
         return new String[]{"'"+getCheckNumber()+"'", "'"+getIdEmployee()+"'",
                 "'"+getCardNumber()+"'", getPrintDate().toString(), getSumTotal().toString(), getVat().toString()};
     }
+    @Override
+    public String[] getKeyValues(){
+        return new String[]{checkNumber};
+    }
 }

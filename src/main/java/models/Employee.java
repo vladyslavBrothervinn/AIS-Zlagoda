@@ -136,4 +136,8 @@ public class Employee extends Table{
                 getSalary().toString(), "'"+getDateOfBirth()+"'", "'"+getDateOfStart()+"'",
                 "'"+getCity()+"'", "'"+getStreet()+"'", "'"+getZipCode()+"'"};
     }
+    @Override
+    public String[] getKeyValues(){
+        return new String[]{idEmployee};
+    }
 }

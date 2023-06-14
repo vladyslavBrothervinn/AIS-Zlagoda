@@ -102,4 +102,8 @@ public class Customer_Card extends Table{
                 "'"+getCustName()+"'", "'"+getCustPatronymic()+"'", "'"+getPhoneNumber()+"'",
                 "'"+getCity()+"'","'"+getStreet()+"'", "'"+getZipCode()+"'", getPercent().toString()};
     }
+    @Override
+    public String[] getKeyValues(){
+        return new String[]{cardNumber};
+    }
 }

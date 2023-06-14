@@ -49,4 +49,8 @@ public class Product extends Table{
         return new String[]{getIdProduct().toString(), getCategoryNumber().toString(),
                 "'"+getProductName()+"'", "'"+getCharacteristics()+"'"};
     }
+    @Override
+    public String[] getKeyValues(){
+        return new String[]{idProduct.toString()};
+    }
 }
