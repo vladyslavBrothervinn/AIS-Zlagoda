@@ -1,9 +1,10 @@
 package db;
 import java.sql.*;
+import java.util.Objects;
 
 public class DatabaseManager {
-    Connection connection;
-    Statement statement;
+    public Connection connection;
+    public Statement statement;
     private static DatabaseManager databaseManager;
     public static DatabaseManager getDatabaseManager() throws SQLException {
         if(databaseManager==null) databaseManager = new DatabaseManager("jdbc:ucanaccess://src/main/resources/Zlagoda.accdb;COLUMNORDER=DISPLAY");
@@ -23,8 +24,10 @@ public class DatabaseManager {
     public void insertRecord(String table, String[] values) throws SQLException {
         StringBuilder sqlQuery = new StringBuilder("INSERT INTO " + table + " VALUES (");
         for(int i = 0; i < values.length; i++){
-            sqlQuery.append(values[i]).append(values.length == i + 1 ? ")" : ", ");
+            sqlQuery.append(Objects.equals(values[i], "''") ?"NULL":values[i]).append(values.length == i + 1 ? "" : ", ");
         }
+        sqlQuery.append(")");
+        System.out.println(sqlQuery);
         statement.executeUpdate(sqlQuery.toString());
     }
 
@@ -61,12 +64,14 @@ public class DatabaseManager {
                               String[] keyValues, String[] columns, String[] values) throws SQLException {
         StringBuilder sqlQuery = new StringBuilder("UPDATE " + table + " SET ");
         for (int i = 0; i < columns.length; i++){
+            if(!Objects.equals(values[i], "''"))
             sqlQuery.append(columns[i]).append(" = ").append(values[i]).append(columns.length==i+1?"":", ");
         }
         sqlQuery.append(" WHERE");
         for(int i = 0; i < keyColumnsNames.length; i++){
             sqlQuery.append(" ").append(keyColumnsNames[i]).append(" = ").append(keyValues[i]).append(keyColumnsNames.length == i + 1 ? "" : " AND");
         }
+        System.out.println(sqlQuery);
         statement.executeUpdate(sqlQuery.toString());
     }
 

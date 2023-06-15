@@ -20,11 +20,11 @@ public class TableManager<T extends Table> {
     private ObservableList<T> data;
   //  private FilteredList<T> filteredData;
     private String tableName;
-    private DatabaseManager databaseManager;
+    public DatabaseManager databaseManager;
     private TableView<T> tableView;
     private ResultSet resultSet;
     private String[] keyColumnsNames;
-    private String[] columnsNames;
+    private String[] nonKeyColumnsNames;
     private LinkedList<TableFilter> keyFilters;
     private LinkedList<TableFilter> substringFilters;
     private LinkedList<TableFilter> dateFilters;
@@ -65,9 +65,9 @@ public class TableManager<T extends Table> {
         for (int i = 0; i < keyColumnsNames.length; i++){
             keyColumnsNames[i] = resultSet.getMetaData().getColumnName(i+1);
         }
-        columnsNames = new String[resultSet.getMetaData().getColumnCount()];
-        for (int i = 0; i < resultSet.getMetaData().getColumnCount(); i++){
-            columnsNames[i] = resultSet.getMetaData().getColumnName(i+1);
+        nonKeyColumnsNames = new String[resultSet.getMetaData().getColumnCount()-1];
+        for (int i = 0; i < resultSet.getMetaData().getColumnCount()-1; i++){
+            nonKeyColumnsNames[i] = resultSet.getMetaData().getColumnName(i+2);
         }
         /*
         asyncRenew = new AsyncRenew();
@@ -158,18 +158,39 @@ public class TableManager<T extends Table> {
      *
      * @param keyValues values of primary key(s)
      * @param newRowValue object which will be a new value of the row(make sure that primary keys are same as in updated row)
-     * @throws SQLException
      */
     public void updateRow(String[] keyValues, T newRowValue) throws SQLException {
         String[] columnsValues = newRowValue.getFieldsValuesAsStringArray();
-        databaseManager.updateRecords(tableName, keyColumnsNames, keyValues, columnsNames, columnsValues);
+        String[] nonKeyColumnsValues = new String[columnsValues.length-keyValues.length];
+        System.arraycopy(columnsValues, keyValues.length, nonKeyColumnsValues, 0, nonKeyColumnsValues.length);
+        //Check for promotional
+        if(Objects.equals(tableName, "Store_Product")){
+            Store_Product store_product = (Store_Product) newRowValue;
+            if(store_product.getPromotionalProduct()){
+                if(!Objects.equals(store_product.getUpcProm(), "")) throw new IllegalArgumentException("Promotional product cannot have promotional UPC!");
+                double sellingPrice;
+                try {
+                    String sql = "SELECT selling_price FROM Store_Product WHERE id_product = " + nonKeyColumnsValues[1] + " AND promotional_product = false";
+                    System.out.println(sql);
+                    ResultSet resultSet = databaseManager.statement.executeQuery(sql);
+                    resultSet.next();
+                    sellingPrice = resultSet.getDouble(1)*0.8;
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                    sellingPrice = store_product.getSellingPrice();
+                }
+                nonKeyColumnsValues[2] = String.valueOf(sellingPrice);
+            }
+            else databaseManager.statement.executeUpdate("UPDATE Store_Product SET selling_price = "+Double.parseDouble(nonKeyColumnsValues[2])*0.8+" WHERE id_product = " + nonKeyColumnsValues[1]);
+        }
+        databaseManager.updateRecords(tableName, keyColumnsNames, keyValues, nonKeyColumnsNames, nonKeyColumnsValues);
         renewTable();
     }
 
     /** Deletes one record
      *
      * @param keyValues values of primary key(s)
-     * @throws SQLException
      */
     public void deleteRow(String[] keyValues) throws SQLException {
         databaseManager.deleteRecords(tableName, keyColumnsNames, keyValues);
@@ -179,10 +200,28 @@ public class TableManager<T extends Table> {
     /** Inserts one record
      *
      * @param newRowValue object which will be a new value of the row
-     * @throws SQLException
      */
     public void insertRow(T newRowValue) throws SQLException {
         String[] columnValues = newRowValue.getFieldsValuesAsStringArray();
+        if(Objects.equals(tableName, "Store_Product")){
+            Store_Product store_product = (Store_Product) newRowValue;
+            ResultSet resultSet = databaseManager.statement.executeQuery("SELECT promotional_product, UPC FROM Store_Product WHERE id_product = " + store_product.getIdProduct());
+           Boolean b = null;
+            if (resultSet.next())
+               b = resultSet.getBoolean(1);
+            if(resultSet.next()||(b!=null&&b==store_product.getPromotionalProduct()))
+                throw new IllegalArgumentException(store_product.getPromotionalProduct()?"This product already has promotional product!":
+                        "This product already exists in the store!");
+            if(store_product.getPromotionalProduct()) {
+                if (!Objects.equals(store_product.getUpcProm(), ""))
+                    throw new IllegalArgumentException("Promotional product cannot have promotional UPC!");
+                databaseManager.statement.executeUpdate("UPDATE Store_Product SET UPC_prom = "+store_product.getUpcProm()+" WHERE id_product = " + store_product.getUpcProm()+" AND promotional_product = false");
+            }
+            else if(!Objects.equals(store_product.getUpcProm(), "")){
+                databaseManager.statement.executeUpdate("UPDATE Store_Product SET selling_price = "+store_product.getSellingPrice()*0.8+
+                        " WHERE UPC IN (SELECT UPC_prom FROM Store_Product WHERE UPC = " + store_product.getUpcProm() +")");
+            }
+        }
         databaseManager.insertRecord(tableName, columnValues);
         renewTable();
     }
