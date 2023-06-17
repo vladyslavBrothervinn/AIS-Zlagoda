@@ -12,6 +12,8 @@ import models.*;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.LinkedList;
 import java.util.Objects;
 
@@ -184,6 +186,11 @@ public class TableManager<T extends Table> {
             }
             else databaseManager.statement.executeUpdate("UPDATE Store_Product SET selling_price = "+Double.parseDouble(nonKeyColumnsValues[2])*0.8+" WHERE id_product = " + nonKeyColumnsValues[1]);
         }
+        else if(Objects.equals(tableName, "Employee")){
+            int p = Period.between(((Employee)newRowValue).getDateOfBirth().toLocalDate(), LocalDate.now()).getYears();
+            if( p<18)
+                throw new IllegalArgumentException("Employee cannot be younger than 18! "+p);
+        }
         databaseManager.updateRecords(tableName, keyColumnsNames, keyValues, nonKeyColumnsNames, nonKeyColumnsValues);
         renewTable();
     }
@@ -221,6 +228,11 @@ public class TableManager<T extends Table> {
                 databaseManager.statement.executeUpdate("UPDATE Store_Product SET selling_price = "+store_product.getSellingPrice()*0.8+
                         " WHERE UPC IN (SELECT UPC_prom FROM Store_Product WHERE UPC = " + store_product.getUpcProm() +")");
             }
+        }
+        else if(Objects.equals(tableName, "Employee")){
+            int p = Period.between(((Employee)newRowValue).getDateOfBirth().toLocalDate(), LocalDate.now()).getYears();
+            if( p<18)
+                throw new IllegalArgumentException("Employee cannot be younger than 18! "+p);
         }
         databaseManager.insertRecord(tableName, columnValues);
         renewTable();
