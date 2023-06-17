@@ -28,13 +28,14 @@ public class HelloController1 {
     private Scene scene;
     private Parent root;
     public static boolean isCashier;
+
     public void switchToScene2(ActionEvent e) throws IOException {
 
-        boolean log = loginCheck();
-        //boolean log = true;
+        //boolean log = loginCheck();
+        boolean log = true;
         if (log) {
-            isCashier = managerCheck(Field_login.getText());
-            //isCashier = true;
+            //isCashier = managerCheck(Field_login.getText());
+            isCashier = true;
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setHeaderText(null);

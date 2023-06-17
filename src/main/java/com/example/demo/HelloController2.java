@@ -87,6 +87,13 @@ public class HelloController2 implements Initializable {
         stage.setScene(scene);
         stage.show();
     }
+    public void switchToCheckScene(ActionEvent e) throws IOException {
+        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("checkScene.fxml")));
+        stage = (Stage)((Node)e.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -118,8 +125,8 @@ public class HelloController2 implements Initializable {
         smallStage.initModality(Modality.WINDOW_MODAL);
         smallStage.initStyle(StageStyle.UTILITY);
 
-        switch (myChoiceBox.getValue()){
-            case "Customer Card" :
+        switch (myChoiceBox.getValue()) {
+            case "Customer Card" -> {
                 TextField textField3 = new TextField(); //1
                 TextField textField4 = new TextField();
                 TextField textField5 = new TextField();
@@ -132,7 +139,6 @@ public class HelloController2 implements Initializable {
                 Button closeButton1 = new Button("Закрити");
                 Button saveButton1 = new Button("Зберегти");
                 closeButton1.setOnAction(e -> smallStage.close());
-
                 GridPane gridPane2 = new GridPane();
                 gridPane2.setPadding(new Insets(10));
                 gridPane2.setHgap(10);
@@ -148,20 +154,17 @@ public class HelloController2 implements Initializable {
                 gridPane2.addRow(8, new Label("percent:"), textField11);
                 gridPane2.addRow(9, saveButton1);
                 gridPane2.addRow(9, closeButton1);
-
                 Scene scene2 = new Scene(gridPane2);
                 smallStage.setScene(scene2);
                 smallStage.setTitle("Додати");
                 smallStage.showAndWait();
-                break;
-
-            case "Category" :
+            }
+            case "Category" -> {
                 TextField textField1 = new TextField();
                 TextField textField2 = new TextField();
                 Button closeButton = new Button("Закрити");
                 Button saveButton = new Button("Зберегти");
                 closeButton.setOnAction(e -> smallStage.close());
-
                 GridPane gridPane1 = new GridPane();
                 gridPane1.setPadding(new Insets(4));
                 gridPane1.setHgap(10);
@@ -170,14 +173,11 @@ public class HelloController2 implements Initializable {
                 gridPane1.addRow(1, new Label("Category name:"), textField2);
                 gridPane1.addRow(2, saveButton);
                 gridPane1.addRow(2, closeButton);
-
                 Scene scene1 = new Scene(gridPane1);
                 smallStage.setScene(scene1);
                 smallStage.setTitle("Додати");
                 smallStage.showAndWait();
-
-                break;
-
+            }
         }
             /*TextField textField = new TextField();
         Button closeButton = new Button("Закрити");
