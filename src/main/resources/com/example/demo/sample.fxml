@@ -25,29 +25,29 @@
    <right>
       <AnchorPane prefHeight="400.0" prefWidth="360.0" style="-fx-background-color: #3B3C36;" BorderPane.alignment="CENTER">
          <children>
-            <Label layoutX="126.0" layoutY="64.0" text="Secure login" textFill="WHITE">
+            <Label layoutX="104.0" layoutY="55.0" text="Вхід в систему" textFill="WHITE">
+               <font>
+                  <Font name="Candara" size="24.0" />
+               </font>
+            </Label>
+            <Label layoutX="13.0" layoutY="143.0" text="Ім'я користувача" textFill="WHITE">
                <font>
                   <Font name="Candara" size="18.0" />
                </font>
             </Label>
-            <Label layoutX="49.0" layoutY="143.0" text="Username" textFill="WHITE">
+            <Label layoutX="50.0" layoutY="200.0" text="Пароль" textFill="WHITE">
                <font>
                   <Font name="Candara" size="18.0" />
                </font>
             </Label>
-            <Label layoutX="50.0" layoutY="200.0" text="Password" textFill="WHITE">
-               <font>
-                  <Font name="Candara" size="18.0" />
-               </font>
-            </Label>
-            <TextField layoutX="148.0" layoutY="141.0" />
-            <PasswordField layoutX="148.0" layoutY="196.0" />
-            <Button layoutX="79.0" layoutY="285.0" mnemonicParsing="false" style="-fx-background-color: #848482;" text="Login" textFill="#fffefe" AnchorPane.leftAnchor="79.0" AnchorPane.rightAnchor="88.0">
+            <TextField fx:id="Field_login" layoutX="163.0" layoutY="142.0" />
+            <PasswordField fx:id="Field_password" layoutX="163.0" layoutY="199.0" />
+            <Button fx:id="login" layoutX="79.0" layoutY="285.0" mnemonicParsing="false" onAction="#switchToScene2" style="-fx-background-color: #848482;" text="Авторизуватися" textFill="#fffefe" AnchorPane.leftAnchor="79.0" AnchorPane.rightAnchor="88.0">
                <font>
                   <Font name="Candara" size="18.0" />
                </font>
             </Button>
-            <Button layoutX="80.0" layoutY="332.0" mnemonicParsing="false" style="-fx-background-color: #848482;" text="Exit" textFill="#fffefe" AnchorPane.leftAnchor="80.0" AnchorPane.rightAnchor="87.0">
+            <Button layoutX="80.0" layoutY="332.0" mnemonicParsing="false" style="-fx-background-color: #848482;" text="Вийти" textFill="#fffefe" AnchorPane.leftAnchor="80.0" AnchorPane.rightAnchor="87.0">
                <font>
                   <Font name="Candara" size="18.0" />
                </font>

@@ -1,5 +1,13 @@
 package models;
 
+import db.DatabaseManager;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
 public class Customer_Card extends Table{
     private String cardNumber;
     private String custSurname;
@@ -105,5 +113,16 @@ public class Customer_Card extends Table{
     @Override
     public String[] getKeyValues(){
         return new String[]{cardNumber};
+    }
+
+    public static ObservableList<Customer_Card> getAllCustomers() throws SQLException {
+        ResultSet resultSet = DatabaseManager.getDatabaseManager().selectRecords("Customer_Card");
+        ObservableList<Customer_Card> customers = FXCollections.observableArrayList();
+        while (resultSet.next()) customers.add(new Customer_Card(resultSet.getString(1), resultSet.getString(2),
+                resultSet.getString(3), resultSet.getString(4),
+                resultSet.getString(5), resultSet.getString(6),
+                resultSet.getString(7), resultSet.getString(8),
+                resultSet.getInt(9)));
+        return customers;
     }
 }

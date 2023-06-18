@@ -69,7 +69,7 @@ public class Check extends Table{
     @Override
     public String[] getFieldsValuesAsStringArray() {
         return new String[]{"'"+getCheckNumber()+"'", "'"+getIdEmployee()+"'",
-                "'"+getCardNumber()+"'", getPrintDate().toString(), getSumTotal().toString(), getVat().toString()};
+                "'"+getCardNumber()+"'", "'" +getPrintDate().toString()+"'", getSumTotal().toString(), getVat().toString()};
     }
     @Override
     public String[] getKeyValues(){
