@@ -108,6 +108,9 @@ public class HelloController2 implements Initializable {
         }
         else selection = new String[]{"Employee", "Category", "Check", "Customer_Card", "Product", "Sale", "Store_Product"};
 
+        add.setOnAction(e -> AddOrUpdate(add.getText()));
+        edit.setOnAction(e -> AddOrUpdate(edit.getText()));
+
         try {
             initializeTheTable("Category");
         } catch (SQLException | ClassNotFoundException e) {
@@ -117,85 +120,233 @@ public class HelloController2 implements Initializable {
         myChoiceBox.getItems().addAll(selection);
         myChoiceBox.setOnAction(this::getSelection);
     }
-
+    private void showInfoWindow(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.initOwner(stage);
+        alert.showAndWait();
+    }
     @FXML
-    private void showAddWindow() {
+    private void AddOrUpdate(String s) {
         Stage smallStage = new Stage();
         smallStage.initOwner(stage);
-        smallStage.initModality(Modality.WINDOW_MODAL);
+        smallStage.initModality(Modality.APPLICATION_MODAL);
         smallStage.initStyle(StageStyle.UTILITY);
 
+        try {
+            if (myChoiceBox.getValue() == null) showInfoWindow("Помилка", "Виберіть таблицю для взаємодії!");
+
         switch (myChoiceBox.getValue()) {
-            case "Customer Card" -> {
-                TextField textField3 = new TextField(); //1
-                TextField textField4 = new TextField();
-                TextField textField5 = new TextField();
-                TextField textField6 = new TextField();
-                TextField textField7 = new TextField();
-                TextField textField8 = new TextField();
-                TextField textField9 = new TextField();
-                TextField textField10 = new TextField();
-                TextField textField11 = new TextField();
+            case "Customer_Card" -> {
+                TextField textField1_0 = new TextField();
+                TextField textField1_1 = new TextField();
+                TextField textField1_2 = new TextField();
+                TextField textField1_3 = new TextField();
+                TextField textField1_4 = new TextField();
+                TextField textField1_5 = new TextField();
+                TextField textField1_6 = new TextField();
+                TextField textField1_7 = new TextField();
+                TextField textField1_8 = new TextField();
+
                 Button closeButton1 = new Button("Закрити");
                 Button saveButton1 = new Button("Зберегти");
+
                 closeButton1.setOnAction(e -> smallStage.close());
-                GridPane gridPane2 = new GridPane();
-                gridPane2.setPadding(new Insets(10));
-                gridPane2.setHgap(10);
-                gridPane2.setVgap(10);
-                gridPane2.addRow(0, new Label("Card number:"), textField3);
-                gridPane2.addRow(1, new Label("Customer surname:"), textField4);
-                gridPane2.addRow(2, new Label("Customer name:"), textField5);
-                gridPane2.addRow(3, new Label("Customer patronymic:"), textField6);
-                gridPane2.addRow(4, new Label("phone number:"), textField7);
-                gridPane2.addRow(5, new Label("city:"), textField8);
-                gridPane2.addRow(6, new Label("street:"), textField9);
-                gridPane2.addRow(7, new Label("zip code:"), textField10);
-                gridPane2.addRow(8, new Label("percent:"), textField11);
-                gridPane2.addRow(9, saveButton1);
-                gridPane2.addRow(9, closeButton1);
-                Scene scene2 = new Scene(gridPane2);
-                smallStage.setScene(scene2);
-                smallStage.setTitle("Додати");
+                // save button has two options if s = "add" or if s = "update"
+                saveButton1.setOnAction(event -> {
+                    if (s.equals("Додати")){
+                        // add to the database info
+                        System.out.println(textField1_1.getText());
+                    }
+                    if (s.equals("Редагувати")){
+                        // edit the database with the info from the text fields
+                        System.out.println(textField1_2.getText());
+                    }
+                });
+                //
+
+                GridPane gridPane1 = new GridPane();
+                gridPane1.setPadding(new Insets(10));
+                gridPane1.setHgap(25);
+                gridPane1.setVgap(25);
+                //gridPane1.addRow(0, new Label("Customer id:"), textField1_0);
+                gridPane1.addRow(1, new Label("Customer surname:"), textField1_1);
+                gridPane1.addRow(2, new Label("Customer name:"), textField1_2);
+                gridPane1.addRow(3, new Label("Customer patronymic:"), textField1_3);
+                gridPane1.addRow(4, new Label("phone number:"), textField1_4);
+                gridPane1.addRow(5, new Label("city:"), textField1_5);
+                gridPane1.addRow(6, new Label("street:"), textField1_6);
+                gridPane1.addRow(7, new Label("zip code:"), textField1_7);
+                gridPane1.addRow(8, new Label("percent:"), textField1_8);
+                gridPane1.addRow(9, saveButton1);
+                gridPane1.addRow(9, closeButton1);
+
+                Scene scene1 = new Scene(gridPane1);
+                smallStage.setScene(scene1);
+                smallStage.setTitle(s);
                 smallStage.showAndWait();
             }
             case "Category" -> {
-                TextField textField1 = new TextField();
-                TextField textField2 = new TextField();
-                Button closeButton = new Button("Закрити");
-                Button saveButton = new Button("Зберегти");
-                closeButton.setOnAction(e -> smallStage.close());
-                GridPane gridPane1 = new GridPane();
-                gridPane1.setPadding(new Insets(4));
-                gridPane1.setHgap(10);
-                gridPane1.setVgap(10);
-                gridPane1.addRow(0, new Label("Category number:"), textField1);
-                gridPane1.addRow(1, new Label("Category name:"), textField2);
-                gridPane1.addRow(2, saveButton);
-                gridPane1.addRow(2, closeButton);
-                Scene scene1 = new Scene(gridPane1);
-                smallStage.setScene(scene1);
-                smallStage.setTitle("Додати");
+                TextField textField2_0 = new TextField();
+                TextField textField2_1 = new TextField();
+
+                Button closeButton2 = new Button("Закрити");
+                Button saveButton2 = new Button("Зберегти");
+
+                closeButton2.setOnAction(e -> smallStage.close());
+
+                GridPane gridPane2 = new GridPane();
+                gridPane2.setPadding(new Insets(4));
+                gridPane2.setHgap(25);
+                gridPane2.setVgap(25);
+                gridPane2.addRow(0, new Label("Category number:"), textField2_0);
+                gridPane2.addRow(1, new Label("Category name:"), textField2_1);
+                gridPane2.addRow(2, saveButton2);
+                gridPane2.addRow(2, closeButton2);
+
+                Scene scene2 = new Scene(gridPane2);
+                smallStage.setScene(scene2);
+                smallStage.setTitle(s);
                 smallStage.showAndWait();
             }
+            case "Employee" ->{
+                //TextField textField3_0 = new TextField();
+                TextField textField3_1 = new TextField();
+                TextField textField3_2 = new TextField();
+                TextField textField3_3 = new TextField();
+                TextField textField3_4 = new TextField();
+                TextField textField3_5 = new TextField();
+                TextField textField3_6 = new TextField();
+                TextField textField3_7 = new TextField();
+                TextField textField3_8 = new TextField();
+                TextField textField3_9 = new TextField();
+                TextField textField3_10 = new TextField();
+                TextField textField3_11 = new TextField();
+
+                Button closeButton3 = new Button("Закрити");
+                Button saveButton3 = new Button("Зберегти");
+
+                closeButton3.setOnAction(e -> smallStage.close());
+
+                GridPane gridPane3 = new GridPane();
+                gridPane3.setPadding(new Insets(13));
+                gridPane3.setHgap(25);
+                gridPane3.setVgap(25);
+                //gridPane3.addRow(0, new Label("Employee_id:"), textField3_0);
+                gridPane3.addRow(1, new Label("Employee surname:"), textField3_1);
+                gridPane3.addRow(2, new Label("Employee name:"), textField3_2);
+                gridPane3.addRow(3, new Label("Employee patronymic:"), textField3_3);
+                gridPane3.addRow(4, new Label("role:"), textField3_4);
+                gridPane3.addRow(5, new Label("salary:"), textField3_5);
+                gridPane3.addRow(6, new Label("date of birth:"), textField3_6);
+                gridPane3.addRow(7, new Label("date of start:"), textField3_7);
+                gridPane3.addRow(8, new Label("phone number:"), textField3_8);
+                gridPane3.addRow(9, new Label("city:"), textField3_9);
+                gridPane3.addRow(10, new Label("street:"), textField3_10);
+                gridPane3.addRow(11, new Label("zip code:"), textField3_11);
+                gridPane3.addRow(12, saveButton3);
+                gridPane3.addRow(12, closeButton3);
+
+                Scene scene3 = new Scene(gridPane3);
+                smallStage.setScene(scene3);
+                smallStage.setTitle(s);
+                smallStage.showAndWait();
+            }
+            case "Product" ->{
+                TextField textField4_0 = new TextField();
+                TextField textField4_1 = new TextField();
+                TextField textField4_2 = new TextField();
+                TextField textField4_3 = new TextField();
+
+                Button closeButton4 = new Button("Закрити");
+                Button saveButton4 = new Button("Зберегти");
+
+                closeButton4.setOnAction(e -> smallStage.close());
+
+                GridPane gridPane4 = new GridPane();
+                gridPane4.setPadding(new Insets(4));
+                gridPane4.setHgap(25);
+                gridPane4.setVgap(25);
+
+                //gridPane4.addRow(0, new Label("id_product:"), textField4_0);
+                gridPane4.addRow(1, new Label("Category number:"), textField4_1);
+                gridPane4.addRow(2, new Label("Product name:"), textField4_2);
+                gridPane4.addRow(3, new Label("Characteristics:"), textField4_3);
+                gridPane4.addRow(4, saveButton4);
+                gridPane4.addRow(4, closeButton4);
+
+                Scene scene4 = new Scene(gridPane4);
+                smallStage.setScene(scene4);
+                smallStage.setTitle(s);
+                smallStage.showAndWait();
+            }
+            case "Sale" ->{
+                TextField textField5_0 = new TextField();
+                TextField textField5_1 = new TextField();
+                TextField textField5_2 = new TextField();
+                TextField textField5_3 = new TextField();
+
+                Button closeButton5 = new Button("Закрити");
+                Button saveButton5 = new Button("Зберегти");
+
+                closeButton5.setOnAction(e -> smallStage.close());
+
+                GridPane gridPane5 = new GridPane();
+                gridPane5.setPadding(new Insets(4));
+                gridPane5.setHgap(25);
+                gridPane5.setVgap(25);
+                //gridPane5.addRow(0, new Label("UPC:"), textField5_0);
+                gridPane5.addRow(1, new Label("Check Number:"), textField5_1);
+                gridPane5.addRow(2, new Label("Product number:"), textField5_2);
+                gridPane5.addRow(3, new Label("Selling price:"), textField5_3);
+                gridPane5.addRow(4, saveButton5);
+                gridPane5.addRow(4, closeButton5);
+
+                Scene scene5 = new Scene(gridPane5);
+                smallStage.setScene(scene5);
+                smallStage.setTitle(s);
+                smallStage.showAndWait();
+            }
+            case "Store_Product" ->{
+                TextField textField6_0 = new TextField();
+                TextField textField6_1 = new TextField();
+                TextField textField6_2 = new TextField();
+                TextField textField6_3 = new TextField();
+                TextField textField6_4 = new TextField();
+                TextField textField6_5 = new TextField();
+
+                Button closeButton6 = new Button("Закрити");
+                Button saveButton6 = new Button("Зберегти");
+
+                closeButton6.setOnAction(e -> smallStage.close());
+
+                GridPane gridPane6 = new GridPane();
+                gridPane6.setPadding(new Insets(6));
+                gridPane6.setHgap(25);
+                gridPane6.setVgap(25);
+                //gridPane6.addRow(0, new Label("UPC:"), textField6_0);
+                gridPane6.addRow(1, new Label("UPC prom:"), textField6_1);
+                gridPane6.addRow(2, new Label("Id product:"), textField6_2);
+                gridPane6.addRow(3, new Label("Selling price:"), textField6_3);
+                gridPane6.addRow(4, new Label("Products number:"), textField6_4);
+                gridPane6.addRow(5, new Label("promotional product:"), textField6_5);
+                gridPane6.addRow(6, saveButton6);
+                gridPane6.addRow(6, closeButton6);
+
+                Scene scene6 = new Scene(gridPane6);
+                smallStage.setScene(scene6);
+                smallStage.setTitle(s);
+                smallStage.showAndWait();
+            }
+            case "" ->{}
         }
-            /*TextField textField = new TextField();
-        Button closeButton = new Button("Закрити");
-        Button saveButton = new Button("Зберегти");
-        closeButton.setOnAction(e -> smallStage.close());
+        } catch (NullPointerException e){
+            System.out.println("choice box is null");
+        }
 
-        GridPane gridPane = new GridPane();
-        gridPane.setPadding(new Insets(10));
-        gridPane.setHgap(10);
-        gridPane.setVgap(10);
-        gridPane.addRow(0, new Label("Enter Info:"), textField);
-        gridPane.addRow(1, saveButton);
-        gridPane.addRow(1, closeButton);
-
-        Scene scene = new Scene(gridPane);
-        smallStage.setScene(scene);
-        smallStage.setTitle("Window2");
-        smallStage.showAndWait();*/
     }
 
     public void getSelection(ActionEvent event){
@@ -269,7 +420,4 @@ public class HelloController2 implements Initializable {
             }
         }
     }
-
-
-
 }
