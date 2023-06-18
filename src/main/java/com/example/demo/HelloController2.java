@@ -21,10 +21,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import models.Category;
-import models.Employee;
 
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -35,21 +33,14 @@ import javax.imageio.ImageIO;
 //import javafx.embed.swing.SwingFXUtils;
 
 import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.control.TableView;
-import javafx.scene.image.WritableImage;
-import javafx.scene.paint.Color;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
-
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
+import org.controlsfx.control.textfield.TextFields;
 
 import static com.example.demo.HelloController1.isCashier;
 
@@ -71,9 +62,12 @@ public class HelloController2 implements Initializable {
     Button del;
     @FXML
     ChoiceBox<String> myChoiceBox;
+    @FXML
+    ChoiceBox<String> AttrChoiceBox;
+    String[] attr_arr;
     String[] selection;
-
-    boolean x = false;
+    @FXML
+    TextField textField;
 
 
     public void initializeTheTable(String selection) throws SQLException, ClassNotFoundException {
@@ -93,6 +87,11 @@ public class HelloController2 implements Initializable {
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
+    }
+    @FXML
+    public void delete(){
+        //method to delete a chosen row
+
     }
 
     @Override
@@ -119,6 +118,23 @@ public class HelloController2 implements Initializable {
 
         myChoiceBox.getItems().addAll(selection);
         myChoiceBox.setOnAction(this::getSelection);
+
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("Input method text changed: " + newValue);
+            // Do something with the new input method text
+            //AttrChoiceBox
+            try {
+                tableManager.removeAllFilters();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                tableManager.addSubstringFilter(AttrChoiceBox.getValue(), newValue);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            //textField.requestFocus();
+        });
     }
     private void showInfoWindow(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -202,7 +218,7 @@ public class HelloController2 implements Initializable {
                 gridPane2.setPadding(new Insets(4));
                 gridPane2.setHgap(25);
                 gridPane2.setVgap(25);
-                gridPane2.addRow(0, new Label("Category number:"), textField2_0);
+                //gridPane2.addRow(0, new Label("Category number:"), textField2_0);
                 gridPane2.addRow(1, new Label("Category name:"), textField2_1);
                 gridPane2.addRow(2, saveButton2);
                 gridPane2.addRow(2, closeButton2);
@@ -213,7 +229,7 @@ public class HelloController2 implements Initializable {
                 smallStage.showAndWait();
             }
             case "Employee" ->{
-                //TextField textField3_0 = new TextField();
+                TextField textField3_0 = new TextField();
                 TextField textField3_1 = new TextField();
                 TextField textField3_2 = new TextField();
                 TextField textField3_3 = new TextField();
@@ -226,6 +242,12 @@ public class HelloController2 implements Initializable {
                 TextField textField3_10 = new TextField();
                 TextField textField3_11 = new TextField();
 
+
+                /*String[] arr = new String[]{"aba", "3331", "124"};
+                TextFields.bindAutoCompletion(textField3_0, arr);*/
+
+
+
                 Button closeButton3 = new Button("Закрити");
                 Button saveButton3 = new Button("Зберегти");
 
@@ -235,7 +257,7 @@ public class HelloController2 implements Initializable {
                 gridPane3.setPadding(new Insets(13));
                 gridPane3.setHgap(25);
                 gridPane3.setVgap(25);
-                //gridPane3.addRow(0, new Label("Employee_id:"), textField3_0);
+                gridPane3.addRow(0, new Label("Employee password:"), textField3_0);
                 gridPane3.addRow(1, new Label("Employee surname:"), textField3_1);
                 gridPane3.addRow(2, new Label("Employee name:"), textField3_2);
                 gridPane3.addRow(3, new Label("Employee patronymic:"), textField3_3);
@@ -357,6 +379,43 @@ public class HelloController2 implements Initializable {
             initializeTheTable(mySelection);
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
+        }
+        switch(mySelection){
+            case "Employee" ->{
+                attr_arr = new String[]{"id_employee","empl_surname","empl_name","empl_patronymic","empl_role","salary","date_of_birth","date_of_start","phone_number","city","street","zip_code"};
+                AttrChoiceBox.getItems().clear();
+                AttrChoiceBox.getItems().addAll(attr_arr);
+            }
+            case "Category" ->{
+                attr_arr = new String[]{"category_number","category_name"};
+                AttrChoiceBox.getItems().clear();
+                AttrChoiceBox.getItems().addAll(attr_arr);
+            }
+            case "Check" ->{
+                attr_arr = new String[]{"check_number","id_employee","card_number","print_date","sum_total","vat"};
+                AttrChoiceBox.getItems().clear();
+                AttrChoiceBox.getItems().addAll(attr_arr);
+            }
+            case "Customer_Card" ->{
+                attr_arr = new String[]{"card_number","cust_surname","cust_name","cust_patronymic","phone_number","city","street","zip_code","percent"};
+                AttrChoiceBox.getItems().clear();
+                AttrChoiceBox.getItems().addAll(attr_arr);
+            }
+            case "Product" ->{
+                attr_arr = new String[]{"id_product","category_number","product_name","characteristics"};
+                AttrChoiceBox.getItems().clear();
+                AttrChoiceBox.getItems().addAll(attr_arr);
+            }
+            case "Sale" ->{
+                attr_arr = new String[]{"UPC","check_number","product_number","selling_price"};
+                AttrChoiceBox.getItems().clear();
+                AttrChoiceBox.getItems().addAll(attr_arr);
+            }
+            case "Store_Product" ->{
+                attr_arr = new String[]{"product_name","UPC","UPC_prom","id_product","selling_price","product_number","promotional_product"};
+                AttrChoiceBox.getItems().clear();
+                AttrChoiceBox.getItems().addAll(attr_arr);
+            }
         }
     }
     public void snapshot() {

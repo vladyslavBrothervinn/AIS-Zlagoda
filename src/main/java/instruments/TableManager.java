@@ -12,6 +12,8 @@ import models.*;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.LinkedList;
 import java.util.Objects;
 
@@ -49,15 +51,26 @@ public class TableManager<T extends Table> {
         data = FXCollections.observableArrayList();
 
         Class<?> tClass = Class.forName("models."+tableName);
-        if(tableView.getColumns().isEmpty())
-        for (int i = 0; i < resultSet.getMetaData().getColumnCount(); i++) {
-            TableColumn col = new TableColumn(resultSet.getMetaData().getColumnName(i + 1));
+        if(tableView.getColumns().isEmpty()){
+            boolean s = Objects.equals(tableName, "Store_Product");
+            int i = 0;
+            if(s) {
+                TableColumn col = new TableColumn("product_name");
+                col.setCellValueFactory(new PropertyValueFactory<>(
+                                tClass.getDeclaredFields()[0].getName()
+                        )
+                );
+                tableView.getColumns().add(col);
+                i++;
+            }
+        for (; i < resultSet.getMetaData().getColumnCount()+(s?1:0); i++) {
+            TableColumn col = new TableColumn(resultSet.getMetaData().getColumnName(i + (s?0:1)));
             col.setCellValueFactory(new PropertyValueFactory<>(
                     tClass.getDeclaredFields()[i].getName()
                     )
             );
             tableView.getColumns().add(col);
-        }
+        }}
         this.tableName = tableName;
         renewTable();
         tableView.setItems(data);
@@ -81,10 +94,12 @@ public class TableManager<T extends Table> {
      * @throws SQLException
      */
     public void renewTable() throws SQLException {
+        TableFilter storeProductF = null;
         int row = tableView.getSelectionModel().getSelectedIndex();
+        if(tableView.isFocused()) row = -1;
         data.clear();
         if(keyFilters.isEmpty()&&substringFilters.isEmpty()&&dateFilters.isEmpty())
-        resultSet = databaseManager.selectRecords(tableName);
+            resultSet = databaseManager.selectRecords(tableName);
         else {
             String[] keyFilterColumnNames = new String[keyFilters.size()];
             String[] keyFilterValues = new String[keyFilters.size()];
@@ -97,9 +112,19 @@ public class TableManager<T extends Table> {
                 keyFilterColumnNames[i] = keyFilters.get(i).fieldName;
                 keyFilterValues[i] = keyFilters.get(i).fieldValues[0];
             }
+
             for (int i = 0; i < substringFilters.size(); i++){
-                substringFilterColumnNames[i] = substringFilters.get(i).fieldName;
-                substringFilterValues[i] = substringFilters.get(i).fieldValues[0];
+                if(Objects.equals(tableName, "Store_Product") && Objects.equals(substringFilters.get(i).fieldName, "product_name")) {
+                    storeProductF = substringFilters.get(i);
+                    System.out.println("it is inside!");
+                    substringFilterColumnNames[substringFilterColumnNames.length-1] = "id_product";
+                    substringFilterValues[substringFilterValues.length-1] = "";
+                }
+
+                else {
+                    substringFilterColumnNames[i] = substringFilters.get(i).fieldName;
+                    substringFilterValues[i] = substringFilters.get(i).fieldValues[0];
+                }
             }
             for(int i = 0; i < dateFilters.size(); i++){
                 dateFilterColumnNames[i] = dateFilters.get(i).fieldName;
@@ -146,11 +171,29 @@ public class TableManager<T extends Table> {
                 break;
             default: break;
         }
+        boolean x = false;
+        if(storeProductF!=null){
+            while(true){
+                //T storeProduct : data
+                for (int i = 0; i < data.size(); i++){
+                    T storeProduct = data.get(i);
+                    if(!((Store_Product)storeProduct).getProductName().toLowerCase().contains(storeProductF.fieldValues[0].toLowerCase())){
+                        data.remove(storeProduct);
+                        x = false;
+                        break;
+                    } else x = true;
+                }
+                if (x || data.size()==0) break;
+
+            }
+        }
         tableView.sort();
+        int finalRow = row;
         Platform.runLater(() -> {
-            tableView.requestFocus();
-            tableView.getSelectionModel().select(row);
-            tableView.getFocusModel().focus(row);
+            if(finalRow !=-1)
+                tableView.requestFocus();
+            tableView.getSelectionModel().select(finalRow);
+            tableView.getFocusModel().focus(finalRow);
         });
     }
 
@@ -183,6 +226,11 @@ public class TableManager<T extends Table> {
                 nonKeyColumnsValues[2] = String.valueOf(sellingPrice);
             }
             else databaseManager.statement.executeUpdate("UPDATE Store_Product SET selling_price = "+Double.parseDouble(nonKeyColumnsValues[2])*0.8+" WHERE id_product = " + nonKeyColumnsValues[1]);
+        }
+        else if(Objects.equals(tableName, "Employee")){
+            int p = Period.between(((Employee)newRowValue).getDateOfBirth().toLocalDate(), LocalDate.now()).getYears();
+            if( p<18)
+                throw new IllegalArgumentException("Employee cannot be younger than 18! "+p);
         }
         databaseManager.updateRecords(tableName, keyColumnsNames, keyValues, nonKeyColumnsNames, nonKeyColumnsValues);
         renewTable();
@@ -221,6 +269,11 @@ public class TableManager<T extends Table> {
                 databaseManager.statement.executeUpdate("UPDATE Store_Product SET selling_price = "+store_product.getSellingPrice()*0.8+
                         " WHERE UPC IN (SELECT UPC_prom FROM Store_Product WHERE UPC = " + store_product.getUpcProm() +")");
             }
+        }
+        else if(Objects.equals(tableName, "Employee")){
+            int p = Period.between(((Employee)newRowValue).getDateOfBirth().toLocalDate(), LocalDate.now()).getYears();
+            if( p<18)
+                throw new IllegalArgumentException("Employee cannot be younger than 18! "+p);
         }
         databaseManager.insertRecord(tableName, columnValues);
         renewTable();

@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class HelloController1 {
+    public String log;
     @FXML
     PasswordField Field_password;
     @FXML
@@ -88,8 +89,8 @@ public class HelloController1 {
         return verification(dictionary);
     }
     public boolean verification(HashMap<String, String> dictionary){
-        String log = Field_login.getText();
-        String pas = Field_password.getText();
+         log = Field_login.getText();
+         String pas = Field_password.getText();
 
         boolean verification = false;
 

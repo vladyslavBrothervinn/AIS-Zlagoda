@@ -1,6 +1,12 @@
 package models;
 
+import db.DatabaseManager;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class Store_Product extends Table{
+    private String productName;
     private String upc;
     private String upcProm;
     private Integer idProduct;
@@ -8,13 +14,23 @@ public class Store_Product extends Table{
     private Integer productsNumber;
     private Boolean promotionalProduct;
     public Store_Product(String upc, String upcProm, Integer idProduct,
-                         Double sellingPrice, Integer productsNumber, Boolean promotionalProduct){
+                         Double sellingPrice, Integer productsNumber, Boolean promotionalProduct) throws SQLException {
         this.setUpc(upc);
         this.setUpcProm(upcProm);
         this.setIdProduct(idProduct);
         this.setSellingPrice(sellingPrice);
         this.setProductsNumber(productsNumber);
         this.setPromotionalProduct(promotionalProduct);
+        ResultSet resultSet = DatabaseManager.getDatabaseManager().statement.executeQuery("SELECT product_name FROM Product WHERE id_product = "+idProduct);
+        if(resultSet.next()) productName = resultSet.getString(1);
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     public String getUpc() {
@@ -75,4 +91,6 @@ public class Store_Product extends Table{
     public String[] getKeyValues(){
         return new String[]{upc};
     }
+
+
 }
