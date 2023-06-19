@@ -53,6 +53,6 @@ public class Sale extends Table{
     }
     @Override
     public String[] getKeyValues(){
-        return new String[]{upc, checkNumber};
+        return new String[]{"'"+upc+"'", "'"+checkNumber+"'"};
     }
 }

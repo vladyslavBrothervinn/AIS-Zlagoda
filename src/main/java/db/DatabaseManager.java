@@ -7,7 +7,7 @@ public class DatabaseManager {
     public Statement statement;
     private static DatabaseManager databaseManager;
     public static DatabaseManager getDatabaseManager() throws SQLException {
-        if(databaseManager==null) databaseManager = new DatabaseManager("jdbc:ucanaccess://C:\\Users\\Cyberpower\\Downloads\\Zlagoda.accdb;COLUMNORDER=DISPLAY");
+        if(databaseManager==null) databaseManager = new DatabaseManager("jdbc:ucanaccess://src/main/resources/Zlagoda.accdb;COLUMNORDER=DISPLAY");
         return databaseManager;
     }
     public DatabaseManager(String sqlAddress) throws SQLException {
@@ -47,7 +47,13 @@ public class DatabaseManager {
         for(int i = 0; i < values.length; i++){
             sqlQuery.append(values[i]).append(values.length == i + 1 ? ")" : ", ");
         }
-        statement.executeUpdate(sqlQuery.toString());
+        System.out.println(sqlQuery);
+        try {
+            statement.executeUpdate(sqlQuery.toString());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     /** Updates records specified by keys
@@ -64,7 +70,7 @@ public class DatabaseManager {
                               String[] keyValues, String[] columns, String[] values) throws SQLException {
         StringBuilder sqlQuery = new StringBuilder("UPDATE " + table + " SET ");
         for (int i = 0; i < columns.length; i++){
-            if(!Objects.equals(values[i], "''"))
+            if(!Objects.equals(values[i], null)&&!Objects.equals(values[i], "'null'"))
             sqlQuery.append(columns[i]).append(" = ").append(values[i]).append(columns.length==i+1?"":", ");
         }
         sqlQuery.append(" WHERE");
@@ -88,6 +94,7 @@ public class DatabaseManager {
         for(int i = 0; i < keyColumnsNames.length; i++){
             sqlQuery.append(" ").append(keyColumnsNames[i]).append(" = ").append(keyValues[i]).append(keyColumnsNames.length == i + 1 ? "" : " AND");
         }
+        System.out.println(sqlQuery);
         statement.executeUpdate(sqlQuery.toString());
     }
 

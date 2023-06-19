@@ -30,6 +30,6 @@ public class Category extends Table{
     }
     @Override
     public String[] getKeyValues(){
-        return new String[]{categoryNumber.toString()};
+        return new String[]{"'"+categoryNumber.toString()+"'"};
     }
 }

@@ -104,6 +104,6 @@ public class Customer_Card extends Table{
     }
     @Override
     public String[] getKeyValues(){
-        return new String[]{cardNumber};
+        return new String[]{"'"+cardNumber+"'"};
     }
 }

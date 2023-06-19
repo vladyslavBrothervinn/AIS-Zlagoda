@@ -89,7 +89,7 @@ public class Store_Product extends Table{
     }
     @Override
     public String[] getKeyValues(){
-        return new String[]{upc};
+        return new String[]{"'"+upc+"'"};
     }
 
 

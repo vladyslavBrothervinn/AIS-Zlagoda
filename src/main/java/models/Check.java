@@ -73,6 +73,6 @@ public class Check extends Table{
     }
     @Override
     public String[] getKeyValues(){
-        return new String[]{checkNumber};
+        return new String[]{"'"+checkNumber+"'"};
     }
 }

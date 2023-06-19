@@ -134,10 +134,10 @@ public class Employee extends Table{
         return new String[]{"'"+getIdEmployee()+"'", "'"+getEmplSurname()+"'", "'"+getEmplName()+"'",
                 "'"+getEmplPatron()+"'", "'"+getEmplRole()+"'",
                 getSalary().toString(), "'"+getDateOfBirth()+"'", "'"+getDateOfStart()+"'",
-                "'"+getCity()+"'", "'"+getStreet()+"'", "'"+getZipCode()+"'"};
+                "'"+getPhoneNumber()+"'", "'"+getCity()+"'", "'"+getStreet()+"'", "'"+getZipCode()+"'"};
     }
     @Override
     public String[] getKeyValues(){
-        return new String[]{idEmployee};
+        return new String[]{"'"+idEmployee+"'"};
     }
 }

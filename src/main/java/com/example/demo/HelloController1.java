@@ -64,11 +64,8 @@ public class HelloController1 {
     public boolean loginCheck() {
         HashMap<String, String> dictionary;
         try {
-            DatabaseManager databaseManager = new DatabaseManager("jdbc:ucanaccess://C:\\Users\\Cyberpower\\Downloads\\Zlagoda.accdb;COLUMNORDER=DISPLAY");
-            Statement statement = databaseManager.connection.createStatement();
-
             String query1 = "SELECT * FROM LoginNPasswords";
-            ResultSet result = statement.executeQuery(query1);
+            ResultSet result = DatabaseManager.getDatabaseManager().statement.executeQuery(query1);
 
             dictionary = new HashMap<>();
 
@@ -81,8 +78,6 @@ public class HelloController1 {
                 String value = dictionary.get(key);
                 System.out.println(key + ": " + value);
             }
-
-            databaseManager.connection.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

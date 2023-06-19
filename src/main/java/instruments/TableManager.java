@@ -74,13 +74,15 @@ public class TableManager<T extends Table> {
         this.tableName = tableName;
         renewTable();
         tableView.setItems(data);
-        keyColumnsNames = new String[Objects.equals(tableName, "Sale") ?2:1];
+        int sale = Objects.equals(tableName, "Sale") ?2:1;
+        keyColumnsNames = new String[sale];
         for (int i = 0; i < keyColumnsNames.length; i++){
             keyColumnsNames[i] = resultSet.getMetaData().getColumnName(i+1);
         }
-        nonKeyColumnsNames = new String[resultSet.getMetaData().getColumnCount()-1];
-        for (int i = 0; i < resultSet.getMetaData().getColumnCount()-1; i++){
-            nonKeyColumnsNames[i] = resultSet.getMetaData().getColumnName(i+2);
+        nonKeyColumnsNames = new String[resultSet.getMetaData().getColumnCount()-sale];
+        for (int i = sale-1; i < resultSet.getMetaData().getColumnCount()-1; i++){
+            nonKeyColumnsNames[i-sale+1] = resultSet.getMetaData().getColumnName(i+2);
+            System.out.println(i);
         }
         /*
         asyncRenew = new AsyncRenew();
@@ -116,11 +118,9 @@ public class TableManager<T extends Table> {
             for (int i = 0; i < substringFilters.size(); i++){
                 if(Objects.equals(tableName, "Store_Product") && Objects.equals(substringFilters.get(i).fieldName, "product_name")) {
                     storeProductF = substringFilters.get(i);
-                    System.out.println("it is inside!");
-                    substringFilterColumnNames[substringFilterColumnNames.length-1] = "id_product";
-                    substringFilterValues[substringFilterValues.length-1] = "";
+                    substringFilterColumnNames[i] = "id_product";
+                    substringFilterValues[i] = "";
                 }
-
                 else {
                     substringFilterColumnNames[i] = substringFilters.get(i).fieldName;
                     substringFilterValues[i] = substringFilters.get(i).fieldValues[0];
@@ -173,9 +173,10 @@ public class TableManager<T extends Table> {
         }
         boolean x = false;
         if(storeProductF!=null){
+            int i = 0;
             while(true){
                 //T storeProduct : data
-                for (int i = 0; i < data.size(); i++){
+                for (; i < data.size(); i++){
                     T storeProduct = data.get(i);
                     if(!((Store_Product)storeProduct).getProductName().toLowerCase().contains(storeProductF.fieldValues[0].toLowerCase())){
                         data.remove(storeProduct);
@@ -183,8 +184,7 @@ public class TableManager<T extends Table> {
                         break;
                     } else x = true;
                 }
-                if (x || data.size()==0) break;
-
+                if (x || data.size()==0||i>=data.size()) break;
             }
         }
         tableView.sort();
@@ -210,7 +210,8 @@ public class TableManager<T extends Table> {
         if(Objects.equals(tableName, "Store_Product")){
             Store_Product store_product = (Store_Product) newRowValue;
             if(store_product.getPromotionalProduct()){
-                if(!Objects.equals(store_product.getUpcProm(), "")) throw new IllegalArgumentException("Promotional product cannot have promotional UPC!");
+                if(store_product.getUpcProm()==null) store_product.setUpcProm("");
+                if(!(Objects.equals(store_product.getUpcProm(), ""))) throw new IllegalArgumentException("Promotional product cannot have promotional UPC!");
                 double sellingPrice;
                 try {
                     String sql = "SELECT selling_price FROM Store_Product WHERE id_product = " + nonKeyColumnsValues[1] + " AND promotional_product = false";
@@ -241,6 +242,9 @@ public class TableManager<T extends Table> {
      * @param keyValues values of primary key(s)
      */
     public void deleteRow(String[] keyValues) throws SQLException {
+        if(Objects.equals(tableName, "Store_Product")){
+            databaseManager.statement.executeUpdate("UPDATE Store_Product SET UPC_prom = NULL WHERE UPC_prom = "+keyValues[0]);
+        }
         databaseManager.deleteRecords(tableName, keyColumnsNames, keyValues);
         renewTable();
     }
@@ -263,11 +267,16 @@ public class TableManager<T extends Table> {
             if(store_product.getPromotionalProduct()) {
                 if (!Objects.equals(store_product.getUpcProm(), ""))
                     throw new IllegalArgumentException("Promotional product cannot have promotional UPC!");
-                databaseManager.statement.executeUpdate("UPDATE Store_Product SET UPC_prom = "+store_product.getUpcProm()+" WHERE id_product = " + store_product.getUpcProm()+" AND promotional_product = false");
+                databaseManager.insertRecord(tableName, columnValues);
+                String sql = "UPDATE Store_Product SET UPC_prom = '" + store_product.getUpc()+
+                        "' WHERE id_product = "+store_product.getIdProduct()+" AND promotional_product = FALSE";
+                System.out.println(sql);
+                databaseManager.statement.executeUpdate(sql);
+                return;
             }
             else if(!Objects.equals(store_product.getUpcProm(), "")){
                 databaseManager.statement.executeUpdate("UPDATE Store_Product SET selling_price = "+store_product.getSellingPrice()*0.8+
-                        " WHERE UPC IN (SELECT UPC_prom FROM Store_Product WHERE UPC = " + store_product.getUpcProm() +")");
+                        " WHERE UPC IN (SELECT UPC_prom FROM Store_Product WHERE UPC = '" + store_product.getUpcProm() +"')");
             }
         }
         else if(Objects.equals(tableName, "Employee")){
@@ -275,7 +284,12 @@ public class TableManager<T extends Table> {
             if( p<18)
                 throw new IllegalArgumentException("Employee cannot be younger than 18! "+p);
         }
-        databaseManager.insertRecord(tableName, columnValues);
+        if (tableName == "Category" || tableName == "Product") {
+            String[] finalColumnValues= new String[nonKeyColumnsNames.length];
+            System.arraycopy(columnValues, keyColumnsNames.length, finalColumnValues, 0, finalColumnValues.length);
+            databaseManager.insertRecordWithSpecifiedColumns(tableName, nonKeyColumnsNames, finalColumnValues);
+        }
+        else databaseManager.insertRecord(tableName, columnValues);
         renewTable();
     }
 
