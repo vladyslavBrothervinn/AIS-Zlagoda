@@ -15,6 +15,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -115,6 +116,71 @@ public class CheckController implements Initializable {
         Scene scene = new Scene(gridPane);
         smallStage.setScene(scene);
         smallStage.setTitle("Підтвердження");
+        smallStage.showAndWait();
+    }
+
+    public void addToCheck(){
+        Stage smallStage = new Stage();
+        smallStage.initOwner(stage);
+        smallStage.initModality(Modality.APPLICATION_MODAL);
+        smallStage.initStyle(StageStyle.UTILITY);
+
+        TextField textField = new TextField();
+
+        Button closeButton = new Button("Закрити");
+        Button saveButton = new Button("Зберегти");
+
+        closeButton.setOnAction(e -> smallStage.close());
+        saveButton.setOnAction(e ->{
+            //System.out.println("saving the receipt");
+
+        });
+
+        GridPane gridPane1 = new GridPane();
+        gridPane1.setPadding(new Insets(3));
+        gridPane1.setHgap(25);
+        gridPane1.setVgap(25);
+
+        gridPane1.addRow(1, new Label("Кількість:"), textField);
+        gridPane1.addRow(2, saveButton);
+        gridPane1.addRow(2, closeButton);
+
+        Scene scene1 = new Scene(gridPane1);
+        smallStage.setScene(scene1);
+        smallStage.setTitle("Додавання товару до чеку");
+        smallStage.showAndWait();
+
+    }
+
+    public void saveCheck(){
+        Stage smallStage = new Stage();
+        smallStage.initOwner(stage);
+        smallStage.initModality(Modality.APPLICATION_MODAL);
+        smallStage.initStyle(StageStyle.UTILITY);
+
+        TextField textField = new TextField();
+
+        Button closeButton = new Button("Закрити");
+        Button saveButton = new Button("Зберегти чек");
+
+        closeButton.setOnAction(e -> smallStage.close());
+        saveButton.setOnAction(e ->{
+            System.out.println("saving the receipt");
+
+        });
+
+        GridPane gridPane1 = new GridPane();
+        gridPane1.setPadding(new Insets(3));
+        gridPane1.setHgap(25);
+        gridPane1.setVgap(25);
+
+        gridPane1.addRow(1, new Label("Customer card number:"), textField);
+        gridPane1.addRow(2, saveButton);
+        gridPane1.addRow(2, closeButton);
+
+        Scene scene1 = new Scene(gridPane1);
+        smallStage.setScene(scene1);
+        smallStage.setTitle("Створення чеку");
         smallStage.showAndWait();
     }
 

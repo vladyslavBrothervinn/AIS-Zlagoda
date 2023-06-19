@@ -12,12 +12,12 @@
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="770.0" prefWidth="1500.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo.CheckController">
    <left>
       <AnchorPane prefHeight="720.0" prefWidth="299.0" style="-fx-background-color: #EBD39C;" BorderPane.alignment="CENTER">
-         <Button fx:id="del" layoutX="55.0" layoutY="300.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #3B3C36;" text="Видалити" textAlignment="CENTER" textFill="WHITE">
+         <Button fx:id="del" layoutX="55.0" layoutY="300.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #3B3C36;" text="Вилучити з чеку" textAlignment="CENTER" textFill="WHITE">
             <font>
                <Font name="Candara" size="18.0" />
             </font>
          </Button>
-         <Button fx:id="add" layoutX="55.0" layoutY="200.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #3B3C36;" text="Додати" textAlignment="CENTER" textFill="WHITE">
+         <Button fx:id="add" layoutX="55.0" layoutY="200.0" mnemonicParsing="false" onAction="#addToCheck" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #3B3C36;" text="Додати до чеку" textAlignment="CENTER" textFill="WHITE">
             <font>
                <Font name="Candara" size="18.0" />
             </font>
@@ -27,12 +27,12 @@
                <Font name="Candara" size="36.0" />
             </font>
          </Label>
-         <Button layoutX="55.0" layoutY="500.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="203.0" style="-fx-background-color: #3B3C36;" text="Згенерувати чек" textAlignment="CENTER" textFill="WHITE">
+         <Button layoutX="55.0" layoutY="600.0" mnemonicParsing="false" onAction="#saveCheck" prefHeight="40.0" prefWidth="203.0" style="-fx-background-color: #3B3C36;" text="Створити чек" textAlignment="CENTER" textFill="WHITE">
             <font>
                <Font name="Candara" size="18.0" />
             </font>
          </Button>
-         <Button layoutX="55.0" layoutY="600.0" mnemonicParsing="false" onAction="#cancelReceipt" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #3B3C36;" text="Відмінити чек" textAlignment="CENTER" textFill="WHITE">
+         <Button layoutX="55.0" layoutY="500.0" mnemonicParsing="false" onAction="#cancelReceipt" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #3B3C36;" text="Відмінити чек" textAlignment="CENTER" textFill="WHITE">
             <font>
                <Font name="Candara" size="18.0" />
             </font>
@@ -42,25 +42,25 @@
    <right>
       <AnchorPane fx:id="paneToSave" prefHeight="796.0" prefWidth="1201.0" style="-fx-background-color: #3B3C36;" BorderPane.alignment="CENTER">
          <children>
-            <ScrollPane layoutX="614.0" layoutY="175.0" prefHeight="163.0" prefWidth="541.0">
+            <ScrollPane layoutX="614.0" layoutY="175.0" prefHeight="184.0" prefWidth="541.0">
                <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="206.0" prefWidth="243.0">
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="149.0" prefWidth="234.0">
                      <children>
-                        <TableView fx:id="table1" layoutX="1.0" layoutY="1.0" prefHeight="150.0" prefWidth="522.0" />
+                        <TableView fx:id="table1" layoutX="1.0" layoutY="1.0" prefHeight="176.0" prefWidth="533.0" />
                      </children>
                   </AnchorPane>
                </content>
             </ScrollPane>
-            <ScrollPane layoutX="25.0" layoutY="175.0" prefHeight="520.0" prefWidth="560.0">
+            <ScrollPane layoutX="25.0" layoutY="175.0" prefHeight="565.0" prefWidth="560.0">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
                      <children>
-                        <TableView fx:id="table2" layoutX="4.0" layoutY="1.0" prefHeight="503.0" prefWidth="545.0" />
+                        <TableView fx:id="table2" layoutX="4.0" layoutY="1.0" prefHeight="555.0" prefWidth="550.0" />
                      </children>
                   </AnchorPane>
                </content>
             </ScrollPane>
-            <ScrollPane layoutX="612.0" layoutY="358.0" prefHeight="337.0" prefWidth="545.0">
+            <ScrollPane layoutX="612.0" layoutY="400.0" prefHeight="337.0" prefWidth="545.0">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="206.0" prefWidth="243.0">
                      <children>
@@ -69,11 +69,26 @@
                   </AnchorPane>
                </content>
             </ScrollPane>
-            <TextField fx:id="searchField" layoutX="25.0" layoutY="120.0" prefHeight="40.0" prefWidth="250.0" promptText="Пошук товару">
+            <TextField fx:id="searchField" layoutX="25.0" layoutY="110.0" prefHeight="40.0" prefWidth="250.0" promptText="Пошук ">
                <font>
                   <Font name="Candara" size="16.0" />
                </font>
             </TextField>
+            <Label layoutX="614.0" layoutY="368.0" text="Чек" textFill="WHITE">
+               <font>
+                  <Font name="Candara" size="20.0" />
+               </font>
+            </Label>
+            <Label layoutX="614.0" layoutY="138.0" text="Товари в магазині" textFill="WHITE">
+               <font>
+                  <Font name="Candara" size="20.0" />
+               </font>
+            </Label>
+            <Label layoutX="25.0" layoutY="56.0" text="Каталог товарів" textFill="WHITE">
+               <font>
+                  <Font name="Candara" size="20.0" />
+               </font>
+            </Label>
          </children></AnchorPane>
    </right>
 </BorderPane>
