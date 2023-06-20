@@ -41,6 +41,7 @@ public class TableManager<T extends Table> {
      * @throws ClassNotFoundException
      */
     public TableManager(DatabaseManager databaseManager, TableView<T> tableView, String tableName) throws SQLException, ClassNotFoundException {
+       if(tableName=="Check") deleteOldChecks();
         keyFilters = new LinkedList<>();
         substringFilters = new LinkedList<>();
         dateFilters = new LinkedList<>();
@@ -82,7 +83,6 @@ public class TableManager<T extends Table> {
         nonKeyColumnsNames = new String[resultSet.getMetaData().getColumnCount()-sale];
         for (int i = sale-1; i < resultSet.getMetaData().getColumnCount()-1; i++){
             nonKeyColumnsNames[i-sale+1] = resultSet.getMetaData().getColumnName(i+2);
-            System.out.println(i);
         }
         /*
         asyncRenew = new AsyncRenew();
@@ -339,6 +339,11 @@ public class TableManager<T extends Table> {
     public void removeDateFilter(TableFilter tableFilter) throws SQLException {
         dateFilters.remove(tableFilter);
         renewTable();
+    }
+
+    private void deleteOldChecks() throws SQLException {
+        String sql = "DELETE FROM Check WHERE print_date+1096 <= NOW()";
+        DatabaseManager.getDatabaseManager().statement.executeUpdate(sql);
     }
 /*
     private class AsyncRenew extends Thread{

@@ -25,6 +25,11 @@
                     <Font name="Candara" size="36.0" />
                 </font>
             </Label>
+         <Button layoutX="34.0" layoutY="566.0" mnemonicParsing="false" onAction="#executeQuery" prefHeight="40.0" prefWidth="203.0" style="-fx-background-color: #3B3C36;" text="Виконати запит" textAlignment="CENTER" textFill="WHITE">
+            <font>
+               <Font name="Candara" size="18.0" />
+            </font>
+         </Button>
         </AnchorPane>
     </left>
     <right>
@@ -57,7 +62,7 @@
             </Label>
             <Text fx:id="text" fill="WHITE" layoutX="603.0" layoutY="63.0" strokeType="OUTSIDE" strokeWidth="0.0" text="sql_query" wrappingWidth="561.24609375">
                <font>
-                  <Font name="Candara" size="18.0" />
+                  <Font name="Candara" size="14.0" />
                </font>
             </Text>
             <TextField fx:id="textField" layoutX="232.0" layoutY="57.0" prefHeight="30.0" prefWidth="200.0" />

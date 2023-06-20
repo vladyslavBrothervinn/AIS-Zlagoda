@@ -26,6 +26,8 @@ public class SQLBasedTable {
 
         tableView.getColumns().clear();
 
+        System.out.println(sql);
+
         ResultSet rs = statement.executeQuery();
 
         for(int i=0; i<rs.getMetaData().getColumnCount(); i++){

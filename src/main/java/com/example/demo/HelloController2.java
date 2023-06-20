@@ -65,6 +65,8 @@ public class HelloController2 implements Initializable {
     @FXML
     Button del;
     @FXML
+    Button checkView;
+    @FXML
     ChoiceBox<String> myChoiceBox;
     @FXML
     ChoiceBox<String> AttrChoiceBox;
@@ -85,6 +87,7 @@ public class HelloController2 implements Initializable {
     @FXML
     BorderPane rootPane;
 
+    public static Check selectedCheck;
 
     Integer counter=+1;
     public static Stage primaryStage;
@@ -98,6 +101,7 @@ public class HelloController2 implements Initializable {
 
 
     public void initializeTheTable(String selection) throws SQLException, ClassNotFoundException {
+        checkView.setVisible(Objects.equals(myChoiceBox.getValue(), "Check"));
         tableManager = new TableManager(DatabaseManager.getDatabaseManager(), tableView1, selection);
         RB_name.setSelected(false);
         RB_date.setSelected(false);
@@ -153,14 +157,9 @@ public class HelloController2 implements Initializable {
         add.setOnAction(e -> AddOrUpdate(add.getText()));
         edit.setOnAction(e -> AddOrUpdate(edit.getText()));
 
-        try {
-            initializeTheTable("Category");
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
         myChoiceBox.getItems().addAll(selection);
         myChoiceBox.setOnAction(this::getSelection);
+        myChoiceBox.setValue("Check");
 
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             updateFilters();
@@ -587,6 +586,8 @@ public class HelloController2 implements Initializable {
     }
     @FXML
     public void checkView(ActionEvent e) throws IOException {
+        if(tableView1.getSelectionModel().getSelectedItems().size()==0) return;
+        selectedCheck =(Check) tableView1.getSelectionModel().getSelectedItems().get(0);
         //перегляд чеку
         root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("checkView.fxml")));
         stage = (Stage)((Node)e.getSource()).getScene().getWindow();

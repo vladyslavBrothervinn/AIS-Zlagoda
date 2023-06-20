@@ -11,7 +11,7 @@
 <BorderPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="765.0" prefWidth="1500.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo.CheckViewController">
     <left>
         <AnchorPane prefHeight="720.0" prefWidth="400.0" style="-fx-background-color: #EBD39C;" BorderPane.alignment="CENTER">
-            <Button layoutX="94.0" layoutY="654.0" mnemonicParsing="false" onAction="#comeback" prefHeight="40.0" prefWidth="203.0" style="-fx-background-color: #3B3C36;" text="Повернутися" textAlignment="CENTER" textFill="WHITE">
+            <Button fx:id="returnButton" layoutX="94.0" layoutY="654.0" mnemonicParsing="false" onAction="#comeback" prefHeight="40.0" prefWidth="203.0" style="-fx-background-color: #3B3C36;" text="Повернутися" textAlignment="CENTER" textFill="WHITE">
                 <font>
                     <Font name="Candara" size="18.0" />
                 </font>
@@ -60,7 +60,7 @@
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
                             <children>
-                                <TableView fx:id="checkTable" layoutX="4.0" layoutY="1.0" prefHeight="486.0" prefWidth="903.0" />
+                                <TableView fx:id="tableView" layoutX="4.0" layoutY="1.0" prefHeight="486.0" prefWidth="903.0" />
                             </children>
                         </AnchorPane>
                     </content>
