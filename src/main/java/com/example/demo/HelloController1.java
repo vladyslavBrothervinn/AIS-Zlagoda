@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import db.DatabaseManager;
+import instruments.EmpData;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -34,11 +35,11 @@ public class HelloController1 {
 
     public void switchToScene2(ActionEvent e) throws IOException {
 
-        //boolean log = loginCheck();
-        boolean log = true;
+        boolean log = loginCheck();
+       // boolean log = true;
         if (log) {
-            //isCashier = managerCheck(Field_login.getText());
-            isCashier = true;
+            isCashier = managerCheck(Field_login.getText());
+          //  isCashier = true;
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setHeaderText(null);
@@ -105,6 +106,7 @@ public class HelloController1 {
                 verification = true;
             }
         }
+        if(verification) EmpData.id = log;
         return verification;
     }
     public boolean managerCheck(String s){

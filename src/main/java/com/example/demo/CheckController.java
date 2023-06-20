@@ -1,7 +1,10 @@
 package com.example.demo;
 
 import db.DatabaseManager;
+import instruments.CheckSalesTableManager;
+import instruments.EmpData;
 import instruments.TableManager;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -19,10 +22,13 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import models.Product;
 import models.Store_Product;
+import org.controlsfx.control.textfield.TextFields;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -36,17 +42,24 @@ public class CheckController implements Initializable {
     @FXML
     TableView<Product> table2;
     @FXML
+    TableView table3;
+    @FXML
     TextField searchField;
     @FXML
     ChoiceBox<String> AttrChoiceBox;
     String[] attr_arr = new String[]{"id_product","category_number","product_name", "characteristics"};
     TableManager<Store_Product> tableManager1;
     TableManager<Product> tableManager2;
+    CheckSalesTableManager checkSalesTableManager;
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
+        try {
+            checkSalesTableManager = new CheckSalesTableManager(table3);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         try {
             tableManager1 = new TableManager<>(DatabaseManager.getDatabaseManager(), table1, "Store_Product");
         } catch (SQLException | ClassNotFoundException e) {
@@ -108,6 +121,15 @@ public class CheckController implements Initializable {
         stage.setScene(scene);
         stage.show();
     }
+    private void showInfoWindow(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.initOwner(stage);
+        alert.showAndWait();
+    }
 
     @FXML
     private void cancelReceipt(ActionEvent event) {
@@ -119,6 +141,11 @@ public class CheckController implements Initializable {
         Label messageLabel = new Label("Натисніть 'Так' для відміни генерації чеку:");
         Button confirmButton = new Button("Так");
         confirmButton.setOnAction(e -> {
+            try {
+                checkSalesTableManager.cancel();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
             smallStage.close();
             try {
                 switchToMainMenu(event);
@@ -144,6 +171,7 @@ public class CheckController implements Initializable {
     }
 
     public void addToCheck(){
+        if(table1.getSelectionModel().getSelectedItems().size()==0) return;
         Stage smallStage = new Stage();
         smallStage.initOwner(stage);
         smallStage.initModality(Modality.APPLICATION_MODAL);
@@ -156,8 +184,16 @@ public class CheckController implements Initializable {
 
         closeButton.setOnAction(e -> smallStage.close());
         saveButton.setOnAction(e ->{
+            System.out.println("Here");
+            Store_Product store_product = table1.getSelectionModel().getSelectedItem();
+            try {
+                checkSalesTableManager.addToTable(store_product.getUpc(), store_product.getProductName(),
+                        Math.abs(Integer.parseInt(textField.getText())), store_product.getSellingPrice(), tableManager1);
+            } catch (Exception ex) {
+                showInfoWindow("Помилка!", "Неправильна кількість");
+                ex.printStackTrace();
+            }
             //System.out.println("saving the receipt");
-
         });
 
         GridPane gridPane1 = new GridPane();
@@ -176,13 +212,29 @@ public class CheckController implements Initializable {
 
     }
 
-    public void saveCheck(){
+    public void saveCheck() throws SQLException {
         Stage smallStage = new Stage();
         smallStage.initOwner(stage);
         smallStage.initModality(Modality.APPLICATION_MODAL);
         smallStage.initStyle(StageStyle.UTILITY);
 
         TextField textField = new TextField();
+        TextField textField1 = new TextField();
+
+        ObservableList<String> actualNumbers = FXCollections.observableArrayList();
+        ObservableList<String> shownList = FXCollections.observableArrayList();
+
+        ResultSet nums = DatabaseManager.getDatabaseManager().statement.executeQuery("SELECT cust_surname, card_number" +
+                " FROM Customer_Card");
+        while (nums.next()){
+            actualNumbers.add(nums.getString(2));
+            shownList.add(nums.getString(1)+" "+nums.getString(2));
+        }
+
+        TextFields.bindAutoCompletion(textField, shownList);
+        textField.textProperty().addListener(e->{
+            if(shownList.contains(textField.getText())) textField.setText(actualNumbers.get(shownList.indexOf(textField.getText())));
+        });
 
         Button closeButton = new Button("Закрити");
         Button saveButton = new Button("Зберегти чек");
@@ -190,7 +242,18 @@ public class CheckController implements Initializable {
         closeButton.setOnAction(e -> smallStage.close());
         saveButton.setOnAction(e ->{
             System.out.println("saving the receipt");
-
+            try {
+                Double sum = checkSalesTableManager.getSum();
+                DatabaseManager.getDatabaseManager().insertRecord("Check", new String[]{
+                    "'"+textField1.getText()+"'", "'"+ EmpData.id +"'", "'"+textField.getText()+"'", "'"+ LocalDate.now()+"'",
+                sum.toString(), String.valueOf((sum/5))});
+                checkSalesTableManager.addAllToCheck(textField1.getText());
+                smallStage.close();
+                switchToMainMenu(e);
+            } catch (SQLException | IOException ex) {
+                showInfoWindow("Помилка!", "Некоректні дані");
+                ex.printStackTrace();
+            }
         });
 
         GridPane gridPane1 = new GridPane();
@@ -199,13 +262,24 @@ public class CheckController implements Initializable {
         gridPane1.setVgap(25);
 
         gridPane1.addRow(1, new Label("Customer card number:"), textField);
-        gridPane1.addRow(2, saveButton);
-        gridPane1.addRow(2, closeButton);
+        gridPane1.addRow(2, new Label("Check number:"), textField1);
+        gridPane1.addRow(3, saveButton);
+        gridPane1.addRow(3, closeButton);
 
         Scene scene1 = new Scene(gridPane1);
         smallStage.setScene(scene1);
         smallStage.setTitle("Створення чеку");
         smallStage.showAndWait();
+    }
+
+    @FXML
+    public void removeFromCheck(){
+        if(table3.getSelectionModel().getSelectedItems().size()==0) return;
+        try {
+            checkSalesTableManager.removeFromTable(table3.getSelectionModel().getSelectedIndex(), tableManager1);
+        } catch (SQLException e) {
+            showInfoWindow("Помилка!", "Некоректні дані");
+        }
     }
 
 }

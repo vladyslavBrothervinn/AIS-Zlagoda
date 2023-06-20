@@ -13,7 +13,7 @@
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="770.0" prefWidth="1500.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo.CheckController">
    <left>
       <AnchorPane prefHeight="720.0" prefWidth="299.0" style="-fx-background-color: #EBD39C;" BorderPane.alignment="CENTER">
-         <Button fx:id="del" layoutX="55.0" layoutY="300.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #3B3C36;" text="Вилучити з чеку" textAlignment="CENTER" textFill="WHITE">
+         <Button layoutX="55.0" layoutY="300.0" mnemonicParsing="false" onAction="#removeFromCheck" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #3B3C36;" text="Вилучити з чеку" textAlignment="CENTER" textFill="WHITE">
             <font>
                <Font name="Candara" size="18.0" />
             </font>
@@ -56,7 +56,7 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
                      <children>
-                        <TableView fx:id="table2" layoutX="4.0" layoutY="1.0" prefHeight="555.0" prefWidth="550.0" />
+                        <TableView fx:id="table2" layoutX="4.0" layoutY="1.0" onSort="#removeFromCheck" prefHeight="555.0" prefWidth="550.0" />
                      </children>
                   </AnchorPane>
                </content>

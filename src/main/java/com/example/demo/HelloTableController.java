@@ -17,7 +17,7 @@ public class HelloTableController {
     boolean x = false;
     public void initialize() throws SQLException, ClassNotFoundException {
         tableManager = new TableManager<>(DatabaseManager.getDatabaseManager(), tableView, "Store_Product");
-        storeProductManager = new StoreProductManager(tableManager);
+        storeProductManager = new StoreProductManager();
     }
 
     public void refreshTable() throws SQLException {
