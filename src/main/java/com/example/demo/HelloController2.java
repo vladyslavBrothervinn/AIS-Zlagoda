@@ -99,6 +99,10 @@ public class HelloController2 implements Initializable {
 
     public void initializeTheTable(String selection) throws SQLException, ClassNotFoundException {
         tableManager = new TableManager(DatabaseManager.getDatabaseManager(), tableView1, selection);
+        RB_name.setSelected(false);
+        RB_date.setSelected(false);
+        getNameFilter();
+        getFilterDate();
     }
 
     public void switchToScene1(ActionEvent e) throws IOException {
@@ -143,9 +147,8 @@ public class HelloController2 implements Initializable {
             add.setDisable(!isCashier);
             edit.setDisable(!isCashier);
             del.setDisable(!isCashier);
-            selection = new String[]{"Category", "Check", "Customer_Card", "Product", "Sale", "Store_Product"};
         }
-        else selection = new String[]{"Employee", "Category", "Check", "Customer_Card", "Product", "Sale", "Store_Product"};
+        selection = new String[]{"Employee", "Category", "Check", "Customer_Card", "Product", "Sale", "Store_Product"};
 
         add.setOnAction(e -> AddOrUpdate(add.getText()));
         edit.setOnAction(e -> AddOrUpdate(edit.getText()));
@@ -160,21 +163,34 @@ public class HelloController2 implements Initializable {
         myChoiceBox.setOnAction(this::getSelection);
 
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("Input method text changed: " + newValue);
-            // Do something with the new input method text
-            //AttrChoiceBox
-            try {
-                tableManager.removeAllFilters();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            try {
-                if(AttrChoiceBox.getValue()!=null)
-                tableManager.addSubstringFilter(AttrChoiceBox.getValue(), newValue);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+            updateFilters();
         });
+        first_datePicker.valueProperty().addListener((ov, oldValue, newValue)->{
+            updateFilters();
+        });
+        second_datePicker.valueProperty().addListener((ov, oldValue, newValue)->{
+            updateFilters();
+        });
+    }
+    private void updateFilters(){
+        try {
+            tableManager.removeAllFilters();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            if(first_datePicker.getValue()!=null&&second_datePicker.getValue()!=null){
+                String filterName = Objects.equals(myChoiceBox.getValue(), "Check") ?"print_date":"date_of_birth";
+                tableManager.addDateFilter(filterName, new String[]{String.valueOf(first_datePicker.getValue()),
+                        String.valueOf(second_datePicker.getValue())});
+            }
+            if(AttrChoiceBox.getValue()!=null
+                    && !Objects.equals(textField.getText(), "")
+                    && !Objects.equals(textField.getText(), null))
+                tableManager.addSubstringFilter(AttrChoiceBox.getValue(), textField.getText());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
     private void showInfoWindow(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -569,6 +585,15 @@ public class HelloController2 implements Initializable {
         }
 
     }
+    @FXML
+    public void checkView(ActionEvent e) throws IOException {
+        //перегляд чеку
+        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("checkView.fxml")));
+        stage = (Stage)((Node)e.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
 
     public void getSelection(ActionEvent event){
         String mySelection = myChoiceBox.getValue();
@@ -584,6 +609,8 @@ public class HelloController2 implements Initializable {
                 attr_arr = new String[]{"id_employee","empl_surname","empl_name","empl_patronymic","empl_role","salary","date_of_birth","date_of_start","phone_number","city","street","zip_code"};
                 AttrChoiceBox.getItems().clear();
                 AttrChoiceBox.getItems().addAll(attr_arr);
+
+                //RB_name.setVisible(isCashier);
             }
             case "Category" ->{
                 attr_arr = new String[]{"category_number","category_name"};
@@ -594,6 +621,7 @@ public class HelloController2 implements Initializable {
                 attr_arr = new String[]{"check_number","id_employee","card_number","print_date","sum_total","vat"};
                 AttrChoiceBox.getItems().clear();
                 AttrChoiceBox.getItems().addAll(attr_arr);
+                add.setDisable(true);
             }
             case "Customer_Card" ->{
                 attr_arr = new String[]{"card_number","cust_surname","cust_name","cust_patronymic","phone_number","city","street","zip_code","percent"};
@@ -616,9 +644,23 @@ public class HelloController2 implements Initializable {
                 AttrChoiceBox.getItems().addAll(attr_arr);
             }
         }
-        RB_date.setVisible(myChoiceBox.getValue().contains("Check") || myChoiceBox.getValue().contains("Employee"));
 
-        add.setDisable(myChoiceBox.getValue().contains("Check"));
+
+        if(!isCashier && myChoiceBox.getValue().contains("Employee")){
+            RB_date.setVisible(false);
+            RB_name.setVisible(false);
+        } else {
+            RB_name.setVisible(true);
+            RB_date.setVisible(myChoiceBox.getValue().contains("Check") || myChoiceBox.getValue().contains("Employee"));
+        }
+
+        add.setDisable(isCashier || !myChoiceBox.getValue().contains("Customer_Card"));
+        edit.setDisable(isCashier || !myChoiceBox.getValue().contains("Customer_Card"));
+
+        if (isCashier) {
+            add.setDisable(false);
+            edit.setDisable(false);
+        }
     }
 
     public void saveAsPDF(Node node, String filePath) {
@@ -807,6 +849,17 @@ public class HelloController2 implements Initializable {
             date_label.setVisible(false);
             first_datePicker.setVisible(false);
             second_datePicker.setVisible(false);
+
+            first_datePicker.setValue(null);
+            second_datePicker.setValue(null);
         }
+    }
+
+    public void goToWFQ(ActionEvent e) throws IOException {
+        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("windowForQueries.fxml")));
+        stage = (Stage)((Node)e.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
     }
 }

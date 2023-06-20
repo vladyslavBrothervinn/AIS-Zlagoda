@@ -31,6 +31,7 @@ import static com.example.demo.HelloController2.imageView;
 
 
 public class PreviewController implements Initializable {
+    public ImageView imageView;
     private Stage stage;
     private Scene scene;
     private Parent root;
@@ -51,15 +52,11 @@ public class PreviewController implements Initializable {
         LocalDate currentDate = LocalDate.now();
         todayDate.setText(currentDate.toString());
 
-        /*ImageView imageView = new ImageView();
         Image image = new Image("C:\\Users\\Cyberpower\\IdeaProjects\\demo-login-window-forDbTesting\\src\\main\\resources\\com\\example\\demo\\image.png");
-        imageView.setImage(image);*/
+        imageView.setImage(image);
 
         savePane.setContent(imageView);
 
-
-
-        //closeWindow.setOnAction(e -> stage.close());
         saveButton.setOnAction(e -> {
             System.out.println("saved!");
         });

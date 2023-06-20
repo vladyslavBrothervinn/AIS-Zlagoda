@@ -22,7 +22,7 @@ public class CheckSalesTableManager {
     public CheckSalesTableManager(TableView tableView) throws SQLException {
         this.tableView = tableView;
         tableView.getColumns().clear();
-        ResultSet rs = DatabaseManager.getDatabaseManager().statement.executeQuery("SELECT UPC, product_name, product_number, Sale.selling_price "+
+        ResultSet rs = DatabaseManager.getDatabaseManager().statement.executeQuery("SELECT UPC, product_name, product_number, Sale.selling_price AS price"+
                 "FROM ((Sale INNER JOIN Store_Product ON Sale.UPC = Store_Product.UPC) "+
                 "INNER JOIN Product ON Product.id_product = Store_Product.id_product)");
         for(int i=0 ; i<rs.getMetaData().getColumnCount(); i++){
@@ -37,6 +37,7 @@ public class CheckSalesTableManager {
     }
 
     public void addToTable(String upc, String product_name, Integer product_number, Double selling_price, TableManager storeTable) throws Exception {
+        selling_price = selling_price*product_number;
         System.out.println("Removing...");
         storeProductManager.removeAmountOfProduct(upc, product_number);
         if(storeTable!=null){

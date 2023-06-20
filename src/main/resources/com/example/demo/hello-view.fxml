@@ -35,7 +35,7 @@
                <Font name="Candara" size="18.0" />
             </font>
          </Button>
-         <Button layoutX="94.0" layoutY="410.0" mnemonicParsing="false" onAction="#snapshot" prefHeight="40.0" prefWidth="203.0" style="-fx-background-color: #3B3C36;" text="Згенерувати звіт" textAlignment="CENTER" textFill="WHITE">
+         <Button layoutX="94.0" layoutY="480.0" mnemonicParsing="false" onAction="#snapshot" prefHeight="40.0" prefWidth="203.0" style="-fx-background-color: #3B3C36;" text="Згенерувати звіт" textAlignment="CENTER" textFill="WHITE">
             <font>
                <Font name="Candara" size="18.0" />
             </font>
@@ -46,6 +46,16 @@
             </font>
          </Label>
          <Button layoutX="94.0" layoutY="120.0" mnemonicParsing="false" onAction="#switchToCheckScene" prefHeight="40.0" prefWidth="203.0" style="-fx-background-color: #3B3C36;" text="Згенерувати чек" textAlignment="CENTER" textFill="WHITE">
+            <font>
+               <Font name="Candara" size="18.0" />
+            </font>
+         </Button>
+         <Button fx:id="checkView" layoutX="94.0" layoutY="410.0" mnemonicParsing="false" onAction="#checkView" prefHeight="40.0" prefWidth="203.0" style="-fx-background-color: #3B3C36;" text="Перегляд чеку" textAlignment="CENTER" textFill="WHITE">
+            <font>
+               <Font name="Candara" size="18.0" />
+            </font>
+         </Button>
+         <Button layoutX="94.0" layoutY="558.0" mnemonicParsing="false" onAction="#goToWFQ" prefHeight="40.0" prefWidth="203.0" style="-fx-background-color: #3B3C36;" text="Віконце для запитів" textAlignment="CENTER" textFill="WHITE">
             <font>
                <Font name="Candara" size="18.0" />
             </font>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="765.0" prefWidth="1500.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo.WFQController">
+    <left>
+        <AnchorPane prefHeight="765.0" prefWidth="259.0" style="-fx-background-color: #EBD39C;" BorderPane.alignment="CENTER">
+            <Button layoutX="34.0" layoutY="653.0" mnemonicParsing="false" onAction="#comeback" prefHeight="40.0" prefWidth="203.0" style="-fx-background-color: #3B3C36;" text="Повернутися" textAlignment="CENTER" textFill="WHITE">
+                <font>
+                    <Font name="Candara" size="18.0" />
+                </font>
+            </Button>
+            <Label layoutX="75.0" layoutY="41.0" text="Zlagoda" textFill="#3b3c36">
+                <font>
+                    <Font name="Candara" size="36.0" />
+                </font>
+            </Label>
+        </AnchorPane>
+    </left>
+    <right>
+        <AnchorPane prefHeight="765.0" prefWidth="1242.0" style="-fx-background-color: #3B3C36;" BorderPane.alignment="CENTER">
+            <children>
+                <ScrollPane layoutX="14.0" layoutY="222.0" prefHeight="519.0" prefWidth="835.0">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
+                            <children>
+                                <TableView fx:id="checkTable" layoutX="4.0" layoutY="1.0" prefHeight="510.0" prefWidth="824.0" />
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </ScrollPane>
+            <Label layoutX="14.0" layoutY="83.0" text="Вибір запитів" textFill="WHITE">
+               <font>
+                  <Font name="Candara" size="24.0" />
+               </font>
+            </Label>
+            <ChoiceBox fx:id="queryBox" layoutX="14.0" layoutY="146.0" prefWidth="150.0" />
+            <Label layoutX="603.0" layoutY="14.0" text="Запит sql:" textFill="WHITE">
+               <font>
+                  <Font name="Candara" size="24.0" />
+               </font>
+            </Label>
+            <Label layoutX="860.0" layoutY="222.0" prefHeight="40.0" prefWidth="66.0" text="Опис:" textFill="WHITE">
+               <font>
+                  <Font name="Candara" size="24.0" />
+               </font>
+            </Label>
+            <Text fx:id="text" fill="WHITE" layoutX="603.0" layoutY="63.0" strokeType="OUTSIDE" strokeWidth="0.0" text="sql_query" wrappingWidth="561.24609375">
+               <font>
+                  <Font name="Candara" size="18.0" />
+               </font>
+            </Text>
+            <TextField fx:id="textField" layoutX="232.0" layoutY="57.0" prefHeight="30.0" prefWidth="200.0" />
+            <DatePicker fx:id="first_date" layoutX="232.0" layoutY="116.0" prefHeight="30.0" prefWidth="200.0" />
+            <DatePicker fx:id="second_date" layoutX="232.0" layoutY="171.0" prefHeight="30.0" prefWidth="200.0" />
+            <Label layoutX="232.0" layoutY="14.0" text="Значення для параметрів" textFill="WHITE">
+               <font>
+                  <Font name="Candara" size="23.0" />
+               </font>
+            </Label>
+            <Text fx:id="description" fill="WHITE" layoutX="860.0" layoutY="279.0" strokeType="OUTSIDE" strokeWidth="0.0" text="description" wrappingWidth="331.24609375">
+               <font>
+                  <Font name="Candara" size="18.0" />
+               </font>
+            </Text>
+            </children></AnchorPane>
+    </right>
+</BorderPane>
