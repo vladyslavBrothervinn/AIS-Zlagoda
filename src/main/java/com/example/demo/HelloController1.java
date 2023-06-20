@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class HelloController1 {
-    public String log;
+    public static String log;
     @FXML
     PasswordField Field_password;
     @FXML

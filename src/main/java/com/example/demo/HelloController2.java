@@ -107,6 +107,17 @@ public class HelloController2 implements Initializable {
         RB_date.setSelected(false);
         getNameFilter();
         getFilterDate();
+        System.out.println(isCashier);
+        System.out.println(HelloController1.isCashier);
+        if(Objects.equals(myChoiceBox.getValue(), "Employee")&&!isCashier){
+            tableManager.addSubstringFilter("id_employee", HelloController1.log);
+            RB_name.setVisible(false);
+            RB_date.setVisible(false);
+        }
+        else {
+            RB_name.setVisible(true);
+            RB_date.setVisible(true);
+        }
     }
 
     public void switchToScene1(ActionEvent e) throws IOException {
