@@ -65,9 +65,9 @@
                   <Font name="Candara" size="14.0" />
                </font>
             </Text>
-            <TextField fx:id="textField" layoutX="232.0" layoutY="57.0" prefHeight="30.0" prefWidth="200.0" />
-            <DatePicker fx:id="first_date" layoutX="232.0" layoutY="116.0" prefHeight="30.0" prefWidth="200.0" />
-            <DatePicker fx:id="second_date" layoutX="232.0" layoutY="171.0" prefHeight="30.0" prefWidth="200.0" />
+            <TextField fx:id="textField" layoutX="232.0" layoutY="57.0" prefHeight="30.0" prefWidth="200.0" promptText="введіть параметр" />
+            <DatePicker fx:id="first_date" layoutX="232.0" layoutY="116.0" prefHeight="30.0" prefWidth="200.0" promptText="початкова дата" />
+            <DatePicker fx:id="second_date" layoutX="232.0" layoutY="171.0" prefHeight="30.0" prefWidth="200.0" promptText="кінцева дата" />
             <Label layoutX="232.0" layoutY="14.0" text="Значення для параметрів" textFill="WHITE">
                <font>
                   <Font name="Candara" size="23.0" />

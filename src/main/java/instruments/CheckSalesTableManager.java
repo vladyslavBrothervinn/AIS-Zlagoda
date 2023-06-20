@@ -23,7 +23,7 @@ public class CheckSalesTableManager {
         this.tableView = tableView;
         tableView.getColumns().clear();
         ResultSet rs = DatabaseManager.getDatabaseManager().statement.executeQuery("SELECT UPC, product_name, product_number, Sale.selling_price AS price"+
-                "FROM ((Sale INNER JOIN Store_Product ON Sale.UPC = Store_Product.UPC) "+
+                " FROM ((Sale INNER JOIN Store_Product ON Sale.UPC = Store_Product.UPC) "+
                 "INNER JOIN Product ON Product.id_product = Store_Product.id_product)");
         for(int i=0 ; i<rs.getMetaData().getColumnCount(); i++){
             final int j = i;

@@ -36,14 +36,28 @@ public class WFQController implements Initializable {
     private Parent root;
     // String sqlQ1 = "PARAMETERS [DateParam] DateTime; SELECT e.empl_surname, e.empl_name, SUM(s.selling_price) AS total_sales FROM (Employee AS e INNER JOIN Check AS c ON e.id_employee = c.id_employee) INNER JOIN Sale AS s ON c.check_number = s.check_number WHERE c.print_date = [DateParam]GROUP BY e.empl_surname, e.empl_nameORDER BY SUM(s.selling_price) DESC;";
 
-    String sqlQ1 = "SELECT e.empl_surname, e.empl_name, SUM(s.selling_price) AS total_sales FROM (Employee AS e INNER JOIN Check AS c ON e.id_employee = c.id_employee) INNER JOIN Sale AS s ON c.check_number = s.check_number WHERE c.print_date = ? GROUP BY e.empl_surname, e.empl_name ORDER BY SUM(s.selling_price) DESC;";
-    String sqlQ2=""; // потім допишу
-    //твої запити
+    String sqlQ1 = "SELECT e.empl_surname, e.empl_name, SUM(s.selling_price) AS total_sales\n"+
+            " FROM (Employee AS e INNER JOIN Check AS c ON e.id_employee = c.id_employee) INNER JOIN Sale AS s ON c.check_number = s.check_number\n"+
+            " WHERE c.print_date = ? GROUP BY e.empl_surname, e.empl_name\n"+" ORDER BY SUM(s.selling_price)\n"+
+            " DESC;";
+    String sqlQ2="SELECT e.id_employee, e.empl_surname \n" +
+            "FROM Employee e \n" +
+            "WHERE NOT EXISTS ( " +
+            "SELECT sp.UPC \n" +
+            "FROM Store_Product sp \n" +
+            "WHERE NOT EXISTS ( " +
+            "SELECT s.UPC \n" +
+            "FROM Sale s \n" +
+            "WHERE s.UPC = sp.UPC \n" +
+            "AND s.check_number IN ( " +
+            "SELECT c.check_number \n" +
+            "FROM Check c \n" +
+            "WHERE c.id_employee = e.id_employee )))";
     String sqlQ3="SELECT Customer_Card.card_number, cust_surname, cust_name, SUM(Nz(sum_total, 0)) AS total_sum\n " +
             "FROM Customer_Card LEFT JOIN Check ON Customer_Card.card_number = Check.card_number\n " +
             "WHERE Check.check_number IN (SELECT check_number \n" +
             "FROM Sale\n" +
-            "WHERE selling_price > 150)\n " +
+            "WHERE (selling_price / product_number) > 150)\n " +
             "GROUP BY Customer_Card.card_number, cust_surname, cust_name\n";
     String sqlQ4="SELECT card_number, cust_surname, cust_name\n " +
             "FROM Customer_Card\n " +
@@ -56,8 +70,8 @@ public class WFQController implements Initializable {
             "AND city = ?))\n";
     String[] sqls;
     // Впиши дескріпшони
-    String description1 = "description1";
-    String description2 = "description2";
+    String description1 = "Дізнатись продажі усіх касирів за певний день";
+    String description2 = "Знайти усіх працівників, що продали всі товари";
     String description3 = "Порахувати, скільки кожен клієнт з тих, що хоч раз купував товар, \n" +
             "дорожчий за 150 грн., витратив грошей загалом(у всіх чеках)";
     String description4 = "Знайти усіх клієнтів, які не купували товари у продавців не з деякого вказаного міста";

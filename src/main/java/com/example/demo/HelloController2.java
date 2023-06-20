@@ -51,6 +51,7 @@ public class HelloController2 implements Initializable {
 
     @FXML
     public AnchorPane paneToSave;
+    public Button reportGen;
     private Stage stage;
     private Scene scene;
     public Parent root;
@@ -162,6 +163,7 @@ public class HelloController2 implements Initializable {
             add.setDisable(!isCashier);
             edit.setDisable(!isCashier);
             del.setDisable(!isCashier);
+            reportGen.setDisable(!isCashier);
         }
         selection = new String[]{"Employee", "Category", "Check", "Customer_Card", "Product", "Sale", "Store_Product"};
 
@@ -199,7 +201,8 @@ public class HelloController2 implements Initializable {
                     && !Objects.equals(textField.getText(), null))
                 tableManager.addSubstringFilter(AttrChoiceBox.getValue(), textField.getText());
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            //throw new RuntimeException(e);
+            //System.out.println();
         }
     }
     private void showInfoWindow(String title, String message) {
@@ -633,7 +636,7 @@ public class HelloController2 implements Initializable {
                 attr_arr = new String[]{"check_number","id_employee","card_number","print_date","sum_total","vat"};
                 AttrChoiceBox.getItems().clear();
                 AttrChoiceBox.getItems().addAll(attr_arr);
-                add.setDisable(true);
+                //add.setDisable(true);
             }
             case "Customer_Card" ->{
                 attr_arr = new String[]{"card_number","cust_surname","cust_name","cust_patronymic","phone_number","city","street","zip_code","percent"};
@@ -659,6 +662,8 @@ public class HelloController2 implements Initializable {
 
 
         if(!isCashier && myChoiceBox.getValue().contains("Employee")){
+            System.out.println("edit1");
+            edit.setDisable(false);
             RB_date.setVisible(false);
             RB_name.setVisible(false);
         } else {
@@ -670,8 +675,9 @@ public class HelloController2 implements Initializable {
         edit.setDisable(isCashier || !myChoiceBox.getValue().contains("Customer_Card"));
 
         if (isCashier) {
-            add.setDisable(false);
-            edit.setDisable(false);
+            System.out.println("edit3");
+            add.setDisable(myChoiceBox.getValue().contains("Check"));
+            edit.setDisable(myChoiceBox.getValue().contains("Check"));
         }
     }
 
@@ -723,11 +729,10 @@ public class HelloController2 implements Initializable {
 
         // Save the image as a BufferedImage
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-        Image fxImage = SwingFXUtils.toFXImage(bufferedImage, null);
-        imageView = new ImageView(fxImage);
+        /*Image fxImage = SwingFXUtils.toFXImage(bufferedImage, null);
+        imageView = new ImageView(fxImage);*/
 
-
-        /*String outputPath = "C:\\Users\\Cyberpower\\IdeaProjects\\demo-login-window-forDbTesting\\src\\main\\resources\\com\\example\\demo\\image.png";
+        String outputPath = "C:\\Users\\Cyberpower\\IdeaProjects\\demo-login-window-forDbTesting\\src\\main\\resources\\com\\example\\demo\\image.png";
 
         // Save the BufferedImage as a PNG file
         try {
@@ -736,105 +741,15 @@ public class HelloController2 implements Initializable {
             System.out.println("Image saved successfully.");
         } catch (IOException e) {
             System.err.println("Error saving image: " + e.getMessage());
-        }*/
+        }
 
-        Thread.sleep(2000);
+        Thread.sleep(1000);
 
         choiceBoxValue = myChoiceBox.getValue();
+        //System.out.println("stopping there");
         switchToPreview(ev);
-
-        /*// Create a PDF document
-        PDDocument document = new PDDocument();
-        PDPage page = new PDPage(new PDRectangle(bufferedImage.getWidth(), bufferedImage.getHeight()));
-        document.addPage(page);*/
     }
 
-
-
-        /*try {
-            // Create a PDImageXObject from the BufferedImage
-            PDImageXObject pdImage = LosslessFactory.createFromImage(document, bufferedImage);
-
-            // Create a content stream and draw the image on the page
-            PDRectangle mediaBox = page.getMediaBox();
-            float startX = mediaBox.getLowerLeftX();
-            float startY = mediaBox.getLowerLeftY();
-            float width = mediaBox.getWidth();
-            float height = mediaBox.getHeight();
-            try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
-                contentStream.drawImage(pdImage, startX, startY, width, height);
-            }
-
-            //_________________________________________________________
-
-
-            //_________________________________________________________
-
-            *//*FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Save Snapshot");
-            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF format", "*.pdf"));
-
-            // Show the save file dialog
-            File file = fileChooser.showSaveDialog(null)*//*;
-
-           *//* if (file != null) {
-                try {
-                    ImageIO.write(Objects.requireNonNull(SwingFXUtils.fromFXImage(image, null)), "pdf", file);
-                    document.save(file);
-                    System.out.println("Snapshot saved to: " + file.getAbsolutePath());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                System.out.println("Snapshot canceled by the user.");
-            }*//*
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                document.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }*/
-
-
-    /*public void snapshot() throws IOException {
-
-        //System.out.println(paneToSave.getHeight()+" "+paneToSave.getWidth()); //765.0 1100.0
-
-        SnapshotParameters params = new SnapshotParameters();
-        params.setFill(Color.TRANSPARENT);
-
-        WritableImage image = new WritableImage((int) tableView1.getWidth(), (int) tableView1.getHeight());
-
-        tableView1.snapshot(params, image);
-
-        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-        ImageView imageView = new ImageView(String.valueOf(bufferedImage));
-
-
-        Pane pane = new Pane();
-        pane.setPrefSize(1500, 1000);
-        pane.setStyle("-fx-background-color: lightgray");
-
-        pane.getChildren().add(imageView);
-
-        // Save the pane as a PDF file
-        String filePath = "C:\\Users\\Cyberpower\\Downloads\\zvits\\"+"zvit_"+ counter +".pdf";
-        System.out.println(filePath);
-        //saveAsPDF(pane, filePath);
-
-        Stage previewStage = new Stage();
-        previewStage.setTitle("Попередній перегляд");
-        previewStage.setScene(new Scene(pane));
-
-        // Show the preview window
-        previewStage.show();
-
-    }*/
     @FXML
     public void getNameFilter(){
         if(RB_name.isSelected()){

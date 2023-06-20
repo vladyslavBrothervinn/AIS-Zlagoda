@@ -47,7 +47,7 @@
                   <Font name="Candara" size="18.0" />
                </font>
             </Button>
-            <Button layoutX="80.0" layoutY="332.0" mnemonicParsing="false" style="-fx-background-color: #848482;" text="Вийти" textFill="#fffefe" AnchorPane.leftAnchor="80.0" AnchorPane.rightAnchor="87.0">
+            <Button fx:id="out" layoutX="80.0" layoutY="332.0" mnemonicParsing="false" onAction="#exit" style="-fx-background-color: #848482;" text="Вийти" textFill="#fffefe" AnchorPane.leftAnchor="80.0" AnchorPane.rightAnchor="87.0">
                <font>
                   <Font name="Candara" size="18.0" />
                </font>

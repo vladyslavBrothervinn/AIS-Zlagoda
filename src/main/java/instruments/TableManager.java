@@ -257,21 +257,25 @@ public class TableManager<T extends Table> {
         String[] columnValues = newRowValue.getFieldsValuesAsStringArray();
         if(Objects.equals(tableName, "Store_Product")){
             Store_Product store_product = (Store_Product) newRowValue;
-            ResultSet resultSet = databaseManager.statement.executeQuery("SELECT promotional_product, UPC FROM Store_Product WHERE id_product = " + store_product.getIdProduct());
-           Boolean b = null;
+            ResultSet resultSet = databaseManager.statement.executeQuery("SELECT promotional_product, UPC, selling_price FROM Store_Product WHERE id_product = " + store_product.getIdProduct());
+            Boolean b = null;
+            Double price;
             if (resultSet.next())
-               b = resultSet.getBoolean(1);
+                b = resultSet.getBoolean(1);
+            price = resultSet.getDouble(3);
             if(resultSet.next()||(b!=null&&b==store_product.getPromotionalProduct()))
                 throw new IllegalArgumentException(store_product.getPromotionalProduct()?"This product already has promotional product!":
                         "This product already exists in the store!");
             if(store_product.getPromotionalProduct()) {
                 if (!Objects.equals(store_product.getUpcProm(), ""))
                     throw new IllegalArgumentException("Promotional product cannot have promotional UPC!");
-                databaseManager.insertRecord(tableName, columnValues);
+                databaseManager.insertRecord(tableName, new String[]{"'"+store_product.getUpc()+"'", "'"+store_product.getUpcProm()+"'", String.valueOf(store_product.getIdProduct()), String.valueOf(price*0.8),
+                        String.valueOf(store_product.getProductsNumber()), String.valueOf(true)});
                 String sql = "UPDATE Store_Product SET UPC_prom = '" + store_product.getUpc()+
                         "' WHERE id_product = "+store_product.getIdProduct()+" AND promotional_product = FALSE";
                 System.out.println(sql);
                 databaseManager.statement.executeUpdate(sql);
+                renewTable();
                 return;
             }
             else if(!Objects.equals(store_product.getUpcProm(), "")){
@@ -292,6 +296,7 @@ public class TableManager<T extends Table> {
         else databaseManager.insertRecord(tableName, columnValues);
         renewTable();
     }
+
 
     /**
      * Class which represents simple filter: key filter means that field can contain only this value,

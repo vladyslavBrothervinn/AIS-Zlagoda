@@ -212,7 +212,8 @@ public class CheckController implements Initializable {
 
     }
 
-    public void saveCheck() throws SQLException {
+    @FXML
+    public void saveCheck(ActionEvent event) throws SQLException {
         Stage smallStage = new Stage();
         smallStage.initOwner(stage);
         smallStage.initModality(Modality.APPLICATION_MODAL);
@@ -249,7 +250,7 @@ public class CheckController implements Initializable {
                 sum.toString(), String.valueOf((sum/5))});
                 checkSalesTableManager.addAllToCheck(textField1.getText());
                 smallStage.close();
-                switchToMainMenu(e);
+                switchToMainMenu(event);
             } catch (SQLException | IOException ex) {
                 showInfoWindow("Помилка!", "Некоректні дані");
                 ex.printStackTrace();
