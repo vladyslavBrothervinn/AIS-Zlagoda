@@ -7,19 +7,19 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.stage.FileChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import javafx.stage.*;
 import models.*;
 
 import java.awt.image.BufferedImage;
@@ -29,6 +29,7 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
@@ -52,7 +53,8 @@ public class HelloController2 implements Initializable {
     public AnchorPane paneToSave;
     private Stage stage;
     private Scene scene;
-    private Parent root;
+    public Parent root;
+    public static Parent root_preview;
     @FXML
     TableView tableView1;
     TableManager tableManager;
@@ -66,10 +68,33 @@ public class HelloController2 implements Initializable {
     ChoiceBox<String> myChoiceBox;
     @FXML
     ChoiceBox<String> AttrChoiceBox;
+    @FXML
+    Label col_label;
+    @FXML
+    Label date_label;
+    @FXML
+    DatePicker first_datePicker;
+    @FXML
+    DatePicker second_datePicker;
+    @FXML
+    TextField textField;
     String[] attr_arr;
     String[] selection;
     @FXML
-    TextField textField;
+    RadioButton RB_name, RB_date;
+    @FXML
+    BorderPane rootPane;
+
+
+    Integer counter=+1;
+    public static Stage primaryStage;
+    private void switchToPreview(ActionEvent e) throws IOException {
+        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("previewScene.fxml")));
+        stage = (Stage)((Node)e.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
 
 
     public void initializeTheTable(String selection) throws SQLException, ClassNotFoundException {
@@ -103,6 +128,14 @@ public class HelloController2 implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        AttrChoiceBox.setVisible(false);
+        col_label.setVisible(false);
+        date_label.setVisible(false);
+        first_datePicker.setVisible(false);
+        second_datePicker.setVisible(false);
+        textField.setVisible(false);
+        RB_date.setVisible(false);
 
         System.out.println("scene2: "+HelloController1.isCashier);
         if (!isCashier){
@@ -141,7 +174,6 @@ public class HelloController2 implements Initializable {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-            //textField.requestFocus();
         });
     }
     private void showInfoWindow(String title, String message) {
@@ -155,7 +187,7 @@ public class HelloController2 implements Initializable {
     }
     @FXML
     private void AddOrUpdate(String s) {
-        if(s.equals("Редагувати")&&tableView1.getSelectionModel().getSelectedItems().size()==0) return;
+        if(s.equals("Редагувати")&&tableView1.getSelectionModel().getSelectedItems().size()==0) showInfoWindow("Помилка", "Виберіть певний рядок таблиці для взаємодії!");
         Stage smallStage = new Stage();
         smallStage.initOwner(stage);
         smallStage.initModality(Modality.APPLICATION_MODAL);
@@ -166,6 +198,9 @@ public class HelloController2 implements Initializable {
 
         switch (myChoiceBox.getValue()) {
             case "Customer_Card" -> {
+
+                RB_date.setVisible(false);
+
                 TextField textField1_0 = new TextField();
                 TextField textField1_1 = new TextField();
                 TextField textField1_2 = new TextField();
@@ -581,26 +616,88 @@ public class HelloController2 implements Initializable {
                 AttrChoiceBox.getItems().addAll(attr_arr);
             }
         }
+        RB_date.setVisible(myChoiceBox.getValue().contains("Check") || myChoiceBox.getValue().contains("Employee"));
+
+        add.setDisable(myChoiceBox.getValue().contains("Check"));
     }
-    public void snapshot() {
+
+    public void saveAsPDF(Node node, String filePath) {
+        try {
+            // Create a temporary image file
+            WritableImage image = node.snapshot(null, null);
+            File tempFile = File.createTempFile("temp", ".pdf");
+            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "pdf", tempFile);
+
+            // Create a PDF document
+            PDDocument document = new PDDocument();
+            PDPage page = new PDPage();
+            document.addPage(page);
+
+            // Load the image into the PDF document
+            PDPageContentStream contentStream = new PDPageContentStream(document, page);
+            contentStream.drawImage(
+                    PDImageXObject.createFromFileByContent(tempFile, document),
+                    0, 0,
+                    page.getMediaBox().getWidth(),
+                    page.getMediaBox().getHeight()
+            );
+            contentStream.close();
+
+            // Save the PDF document
+            document.save(filePath);
+            document.close();
+
+            // Delete the temporary image file
+            tempFile.delete();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String choiceBoxValue;
+    public static ImageView imageView;
+    public void snapshot(ActionEvent ev) throws IOException, InterruptedException {
+
         SnapshotParameters params = new SnapshotParameters();
         params.setFill(Color.TRANSPARENT); // Set the background fill to transparent
 
         // Create a WritableImage object with appropriate dimensions
-        WritableImage image = new WritableImage((int) paneToSave.getWidth(), (int) paneToSave.getHeight());
+        WritableImage image = new WritableImage((int) tableView1.getWidth(), (int) tableView1.getHeight());
 
         // Capture the snapshot
-        paneToSave.snapshot(params, image);
+        tableView1.snapshot(params, image);
 
         // Save the image as a BufferedImage
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+        Image fxImage = SwingFXUtils.toFXImage(bufferedImage, null);
+        imageView = new ImageView(fxImage);
 
-        // Create a PDF document
+
+        /*String outputPath = "C:\\Users\\Cyberpower\\IdeaProjects\\demo-login-window-forDbTesting\\src\\main\\resources\\com\\example\\demo\\image.png";
+
+        // Save the BufferedImage as a PNG file
+        try {
+            File outputFile = new File(outputPath);
+            ImageIO.write(bufferedImage, "png", outputFile);
+            System.out.println("Image saved successfully.");
+        } catch (IOException e) {
+            System.err.println("Error saving image: " + e.getMessage());
+        }*/
+
+        Thread.sleep(2000);
+
+        choiceBoxValue = myChoiceBox.getValue();
+        switchToPreview(ev);
+
+        /*// Create a PDF document
         PDDocument document = new PDDocument();
         PDPage page = new PDPage(new PDRectangle(bufferedImage.getWidth(), bufferedImage.getHeight()));
-        document.addPage(page);
+        document.addPage(page);*/
+    }
 
-        try {
+
+
+        /*try {
             // Create a PDImageXObject from the BufferedImage
             PDImageXObject pdImage = LosslessFactory.createFromImage(document, bufferedImage);
 
@@ -614,14 +711,19 @@ public class HelloController2 implements Initializable {
                 contentStream.drawImage(pdImage, startX, startY, width, height);
             }
 
-            FileChooser fileChooser = new FileChooser();
+            //_________________________________________________________
+
+
+            //_________________________________________________________
+
+            *//*FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save Snapshot");
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF format", "*.pdf"));
 
             // Show the save file dialog
-            File file = fileChooser.showSaveDialog(null);
+            File file = fileChooser.showSaveDialog(null)*//*;
 
-            if (file != null) {
+           *//* if (file != null) {
                 try {
                     ImageIO.write(Objects.requireNonNull(SwingFXUtils.fromFXImage(image, null)), "pdf", file);
                     document.save(file);
@@ -631,7 +733,7 @@ public class HelloController2 implements Initializable {
                 }
             } else {
                 System.out.println("Snapshot canceled by the user.");
-            }
+            }*//*
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -641,6 +743,70 @@ public class HelloController2 implements Initializable {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }*/
+
+
+    /*public void snapshot() throws IOException {
+
+        //System.out.println(paneToSave.getHeight()+" "+paneToSave.getWidth()); //765.0 1100.0
+
+        SnapshotParameters params = new SnapshotParameters();
+        params.setFill(Color.TRANSPARENT);
+
+        WritableImage image = new WritableImage((int) tableView1.getWidth(), (int) tableView1.getHeight());
+
+        tableView1.snapshot(params, image);
+
+        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+        ImageView imageView = new ImageView(String.valueOf(bufferedImage));
+
+
+        Pane pane = new Pane();
+        pane.setPrefSize(1500, 1000);
+        pane.setStyle("-fx-background-color: lightgray");
+
+        pane.getChildren().add(imageView);
+
+        // Save the pane as a PDF file
+        String filePath = "C:\\Users\\Cyberpower\\Downloads\\zvits\\"+"zvit_"+ counter +".pdf";
+        System.out.println(filePath);
+        //saveAsPDF(pane, filePath);
+
+        Stage previewStage = new Stage();
+        previewStage.setTitle("Попередній перегляд");
+        previewStage.setScene(new Scene(pane));
+
+        // Show the preview window
+        previewStage.show();
+
+    }*/
+    @FXML
+    public void getNameFilter(){
+        if(RB_name.isSelected()){
+            AttrChoiceBox.setVisible(true);
+            col_label.setVisible(true);
+            textField.setVisible(true);
+        }
+        if(!RB_name.isSelected()){
+            AttrChoiceBox.setVisible(false);
+            col_label.setVisible(false);
+            textField.clear();
+            textField.setVisible(false);
+
+        }
+    }
+    @FXML
+    public void getFilterDate(){
+        if(RB_date.isSelected()){
+            date_label.setVisible(true);
+            first_datePicker.setVisible(true);
+            second_datePicker.setVisible(true);
+        }
+        if(!RB_date.isSelected()){
+            date_label.setVisible(false);
+            first_datePicker.setVisible(false);
+            second_datePicker.setVisible(false);
         }
     }
 }

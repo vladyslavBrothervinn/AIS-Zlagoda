@@ -4,12 +4,14 @@ import db.DatabaseManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -25,7 +27,7 @@ public class HelloController1 {
     @FXML
     TextField Field_login;
 
-    private Stage stage;
+    public static Stage MainStage;
     private Scene scene;
     private Parent root;
     public static boolean isCashier;
@@ -44,10 +46,19 @@ public class HelloController1 {
             alert.showAndWait();
 
             root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("hello-view.fxml")));
-            stage = (Stage)((Node)e.getSource()).getScene().getWindow();
+            MainStage = (Stage)((Node)e.getSource()).getScene().getWindow();
             scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
+            MainStage.setScene(scene);
+
+
+            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+            double centerX = screenBounds.getMinX() + (screenBounds.getWidth() - MainStage.getWidth()) / 2;
+            double centerY = screenBounds.getMinY() + (screenBounds.getHeight() - MainStage.getHeight()) / 2;
+
+            MainStage.setX(centerX);
+            MainStage.setY(centerY);
+
+            MainStage.show();
         }
         else {
             Alert alert = new Alert(Alert.AlertType.ERROR);

@@ -12,10 +12,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -38,12 +35,18 @@ public class CheckController implements Initializable {
     TableView<Store_Product> table1;
     @FXML
     TableView<Product> table2;
+    @FXML
+    TextField searchField;
+    @FXML
+    ChoiceBox<String> AttrChoiceBox;
+    String[] attr_arr = new String[]{"id_product","category_number","product_name", "characteristics"};
     TableManager<Store_Product> tableManager1;
     TableManager<Product> tableManager2;
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
         try {
             tableManager1 = new TableManager<>(DatabaseManager.getDatabaseManager(), table1, "Store_Product");
         } catch (SQLException | ClassNotFoundException e) {
@@ -75,6 +78,27 @@ public class CheckController implements Initializable {
 
             }
         });
+
+        AttrChoiceBox.getItems().addAll(attr_arr);
+
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("Input method text changed: " + newValue);
+            // Do something with the new input method text
+            //AttrChoiceBox
+            try {
+                tableManager2.removeAllFilters();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                if(AttrChoiceBox.getValue()!=null)
+                    tableManager2.addSubstringFilter(AttrChoiceBox.getValue(), newValue);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            //textField.requestFocus();
+        });
+
     }
 
     public void switchToMainMenu(ActionEvent e) throws IOException {
